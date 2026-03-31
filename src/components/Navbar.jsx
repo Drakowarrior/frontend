@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import {Menu, X } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Menu, X } from 'lucide-react';
 
 const Navbar = ({ theme, toggleTheme }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
 
-  const navItems = [
+  // Wrap navItems in useMemo to prevent recreation on every render
+  const navItems = useMemo(() => [
     { id: 'home', label: 'Home' },
     { id: 'about', label: 'About' },
     { id: 'skills', label: 'Skills' },
@@ -15,7 +16,7 @@ const Navbar = ({ theme, toggleTheme }) => {
     { id: 'education', label: 'Education' },
     { id: 'certificates', label: 'Certificates' },
     { id: 'contact', label: 'Contact' },
-  ];
+  ], []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,7 +38,7 @@ const Navbar = ({ theme, toggleTheme }) => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [navItems]);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -78,7 +79,6 @@ const Navbar = ({ theme, toggleTheme }) => {
               </li>
             ))}
           </ul>
-
 
           <button
             className="mobile-menu-toggle"

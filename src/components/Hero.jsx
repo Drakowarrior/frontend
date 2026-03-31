@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Download, ArrowRight, Code, Brain, Microscope } from 'lucide-react';
 import { Card } from './ui/card';
 
 const Hero = () => {
   const [typewriterText, setTypewriterText] = useState('');
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
-  const roles = ['AI Enthusiast', 'ML Developer', 'Web Developer', 'Bioscience Innovator'];
+  
+  // Wrap roles in useMemo to prevent recreation on every render
+  const roles = useMemo(() => ['AI Enthusiast', 'ML Developer', 'Web Developer', 'Bioscience Innovator'], []);
 
   useEffect(() => {
     let currentIndex = 0;
@@ -42,7 +44,7 @@ const Hero = () => {
     type();
 
     return () => clearTimeout(timeout);
-  }, [currentRoleIndex]);
+  }, [currentRoleIndex, roles]);
 
   const scrollToProjects = () => {
     document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
