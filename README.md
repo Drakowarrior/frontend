@@ -4,7 +4,7 @@ A modern, fully responsive personal portfolio website built using React.js with 
 
 🚀 Live Preview
 
-(Add your deployed link here)
+[(https://karanportfolio-indol.vercel.app/)]
 
 ✨ Features
 🎨 Modern UI/UX Design (Minimal + Luxury style)
