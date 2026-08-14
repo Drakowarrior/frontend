@@ -1,325 +1,214 @@
-import React, { useState, useEffect, useMemo, useRef, Suspense } from 'react';
-import { Download, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, ArrowUpRight, Cpu, Database, Network, Sparkles } from 'lucide-react';
 import { FaLinkedin, FaGithub, FaEnvelope } from 'react-icons/fa';
-import { motion } from 'framer-motion';
 import Magnetic from './ui/Magnetic';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
-import * as THREE from 'three';
-
-// 3D DNA Helix component
-const DNAHelix = ({ theme }) => {
-  const groupRef = useRef();
-  const spheresCount = 15;
-  const radius = 1.2;
-  const spacing = 0.25;
-
-  useFrame((state) => {
-    const time = state.clock.getElapsedTime();
-    groupRef.current.rotation.y = time * 0.5;
-    groupRef.current.rotation.x = Math.sin(time * 0.2) * 0.2;
-  });
-
-  const color1 = theme === 'dark' ? '#8b5cf6' : '#6366f1'; // Purple/indigo
-  const color2 = theme === 'dark' ? '#06b6d4' : '#0ea5e9'; // Cyan/sky
-  const rungsColor = theme === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)';
-
-  // Build the double helix points
-  const points = useMemo(() => {
-    const pts = [];
-    for (let i = 0; i < spheresCount; i++) {
-      const angle = i * 0.5;
-      const y = (i - spheresCount / 2) * spacing;
-      
-      const x1 = Math.sin(angle) * radius;
-      const z1 = Math.cos(angle) * radius;
-      
-      const x2 = Math.sin(angle + Math.PI) * radius;
-      const z2 = Math.cos(angle + Math.PI) * radius;
-      
-      pts.push({
-        pos1: [x1, y, z1],
-        pos2: [x2, y, z2],
-      });
-    }
-    return pts;
-  }, [spheresCount, spacing, radius]);
-
-  return (
-    <group ref={groupRef}>
-      {points.map((pt, i) => (
-        <group key={i}>
-          {/* Sphere on Strand 1 */}
-          <mesh position={pt.pos1}>
-            <sphereGeometry args={[0.1, 16, 16]} />
-            <meshStandardMaterial color={color1} roughness={0.3} metalness={0.2} />
-          </mesh>
-
-          {/* Sphere on Strand 2 */}
-          <mesh position={pt.pos2}>
-            <sphereGeometry args={[0.1, 16, 16]} />
-            <meshStandardMaterial color={color2} roughness={0.3} metalness={0.2} />
-          </mesh>
-
-          {/* Connecting Rung */}
-          <mesh position={[
-            (pt.pos1[0] + pt.pos2[0]) / 2,
-            pt.pos1[1],
-            (pt.pos1[2] + pt.pos2[2]) / 2
-          ]}>
-            <cylinderGeometry args={[0.02, 0.02, radius * 2, 8]} />
-            <meshStandardMaterial 
-              color={theme === 'dark' ? '#4b5563' : '#d1d5db'} 
-              roughness={0.8}
-            />
-          </mesh>
-        </group>
-      ))}
-    </group>
-  );
-};
+import { PERSONAL_INFO } from '../data/portfolioData';
 
 const Hero = ({ theme }) => {
-  const [typewriterText, setTypewriterText] = useState('');
-  const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [roleIndex, setRoleIndex] = useState(0);
+  const isDark = theme === 'dark';
+  const roles = useMemo(() => PERSONAL_INFO.roles, []);
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      const x = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
-      const y = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
-      setMousePos({ x, y });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+    const interval = setInterval(() => {
+      setRoleIndex((prev) => (prev + 1) % roles.length);
+    }, 2800);
+    return () => clearInterval(interval);
+  }, [roles.length]);
 
-  const roles = useMemo(() => [
-    'AI/ML Engineer', 
-    'Full Stack Developer', 
-    'Computer Vision Enthusiast', 
-    'Bioinformatics Explorer'
-  ], []);
-
-  useEffect(() => {
-    let currentIndex = 0;
-    let isDeleting = false;
-    let timeout;
-
-    const type = () => {
-      const currentRole = roles[currentRoleIndex];
-
-      if (!isDeleting) {
-        if (currentIndex < currentRole.length) {
-          setTypewriterText(currentRole.substring(0, currentIndex + 1));
-          currentIndex++;
-          timeout = setTimeout(type, 80);
-        } else {
-          timeout = setTimeout(() => {
-            isDeleting = true;
-            type();
-          }, 1500);
-        }
-      } else {
-        if (currentIndex > 0) {
-          setTypewriterText(currentRole.substring(0, currentIndex - 1));
-          currentIndex--;
-          timeout = setTimeout(type, 40);
-        } else {
-          isDeleting = false;
-          setCurrentRoleIndex((prev) => (prev + 1) % roles.length);
-          timeout = setTimeout(type, 300);
-        }
-      }
-    };
-
-    type();
-    return () => clearTimeout(timeout);
-  }, [currentRoleIndex, roles]);
-
-  const scrollToContact = () => {
-    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToSection = (id) => {
+    document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
   };
-
-  const handleDownloadResume = () => {
-    window.open(process.env.PUBLIC_URL + '/KaranGarg_Resume.pdf', '_blank');
-  };
-
-  const textGradientClass = theme === 'dark' ? 'text-gradient' : 'text-gradient-light';
 
   return (
-    <section id="home" className="min-h-screen pt-20 flex items-center justify-center relative overflow-hidden px-6">
-      <div className="max-w-7xl w-full mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-center py-12 md:py-24 z-10">
-        
-        {/* Left Info Column */}
-        <div 
-          className="md:col-span-7 flex flex-col justify-center text-left"
-          style={{ 
-            transform: `translate3d(${mousePos.x * -10}px, ${mousePos.y * -10}px, 0)`,
-            transition: 'transform 0.2s cubic-bezier(0.25, 1, 0.5, 1)'
-          }}
-        >
+    <section
+      id="home"
+      className="relative min-h-[84vh] flex items-center justify-center pt-24 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden"
+    >
+      <div className="max-w-5xl w-full mx-auto relative z-10">
+        <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
+          
+          {/* Status Badge */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold tracking-wider mb-6 w-fit bg-opacity-10 backdrop-blur-md border-opacity-20 transition-all duration-300"
-            style={{
-              borderColor: theme === 'dark' ? 'rgba(139, 92, 246, 0.3)' : 'rgba(99, 102, 241, 0.2)',
-              backgroundColor: theme === 'dark' ? 'rgba(139, 92, 246, 0.1)' : 'rgba(99, 102, 241, 0.05)',
-              color: theme === 'dark' ? '#a78bfa' : '#4f46e5'
-            }}
+            transition={{ duration: 0.5 }}
+            className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-mono tracking-widest uppercase mb-6 font-bold ${
+              isDark
+                ? 'border-accent-purple/30 bg-accent-purple/10 text-accent-cyan shadow-glow-purple/20'
+                : 'border-accent-purple/30 bg-purple-50 text-accent-purple shadow-sm'
+            }`}
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-            Open for Opportunities
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>AI ENGINEER • FULL-STACK DEVELOPER</span>
           </motion.div>
 
+          {/* Prominent Name Header */}
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight font-display"
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="font-display font-black text-6xl sm:text-8xl md:text-9xl tracking-tight leading-[0.98] text-gray-900 dark:text-white"
           >
-            Hello, I'm <br />
-            <span className={`${textGradientClass} leading-tight`}>Karan Garg</span>
+            KARAN <span className="text-gradient dark:text-gradient">GARG</span>
           </motion.h1>
 
+          {/* Core Tagline */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="h-10 sm:h-12 mt-4 text-xl sm:text-2xl font-semibold font-body"
-            style={{ color: theme === 'dark' ? '#d1d5db' : '#475569' }}
+            transition={{ duration: 0.6, delay: 0.18 }}
+            className="mt-4"
           >
-            <span>I am a </span>
-            <span className="text-accent-cyan border-r-2 border-accent-cyan pr-1 animate-pulse">
-              {typewriterText}
-            </span>
+            <h2 className="font-display font-extrabold text-xl sm:text-2xl md:text-3xl tracking-tight text-gray-800 dark:text-gray-200">
+              BUILDING INTELLIGENT SYSTEMS FOR THE REAL WORLD.
+            </h2>
           </motion.div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
+          {/* Animated Role Switcher */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="mt-6 text-base sm:text-lg leading-relaxed font-body max-w-xl"
-            style={{ color: theme === 'dark' ? '#9ca3af' : '#4b5563' }}
+            transition={{ duration: 0.6, delay: 0.22 }}
+            className="mt-4 flex items-center justify-center gap-2 h-8"
           >
-            A Computer Science & Bioscience student passionate about merging biology and computing. 
-            I build intelligent systems using Machine Learning, Deep Learning, and Computer Vision, backed by robust Full-Stack Web architectures.
+            <span className="font-mono text-xs sm:text-sm text-gray-700 dark:text-gray-400 font-semibold uppercase tracking-wider">
+              Specialized in
+            </span>
+            <div className="relative inline-block overflow-hidden h-7">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={roles[roleIndex]}
+                  initial={{ y: 18, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -18, opacity: 0 }}
+                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  className="font-mono text-xs sm:text-sm font-bold px-3 py-0.5 rounded-lg bg-accent-purple/15 dark:bg-accent-purple/20 border border-accent-purple/40 text-accent-purple dark:text-accent-cyan inline-block"
+                >
+                  {roles[roleIndex]}
+                </motion.span>
+              </AnimatePresence>
+            </div>
+          </motion.div>
+
+          {/* Bio Statement */}
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.28 }}
+            className="mt-5 text-base sm:text-lg font-medium leading-relaxed max-w-2xl text-gray-800 dark:text-gray-300"
+          >
+            Architecting scalable AI applications, LLM systems, and high-performance full-stack web platforms with Python, FastAPI, React, and Machine Learning.
           </motion.p>
 
-          {/* Call to Actions */}
+          {/* Action CTAs - Clean, balanced 2-button layout */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-wrap gap-4 mt-8"
+            transition={{ duration: 0.6, delay: 0.35 }}
+            className="mt-8 flex flex-wrap items-center justify-center gap-4 w-full"
           >
-            <Magnetic range={50} strength={0.35}>
+            {/* 1. Primary CTA: VIEW MY WORK */}
+            <Magnetic range={45} strength={0.35}>
               <button
-                onClick={scrollToContact}
-                className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-accent-purple to-accent-blue text-white font-semibold text-sm tracking-wide shadow-lg hover:shadow-accent-purple/20 hover:scale-[1.03] active:scale-[0.98] transition-all flex items-center gap-2"
+                onClick={() => scrollToSection('#projects')}
+                className="px-8 py-3.5 rounded-2xl font-mono text-xs sm:text-sm font-bold tracking-wider text-white bg-gradient-to-r from-accent-purple via-accent-violet to-accent-cyan shadow-glow-purple hover:scale-[1.03] active:scale-[0.98] transition-all flex items-center gap-2 group"
               >
-                Contact Me
-                <ArrowRight size={18} />
+                <span>VIEW MY WORK</span>
+                <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
               </button>
             </Magnetic>
-            <Magnetic range={50} strength={0.35}>
+
+            {/* 2. Secondary CTA: LET'S TALK */}
+            <Magnetic range={45} strength={0.35}>
               <button
-                onClick={handleDownloadResume}
-                className={`px-6 py-3.5 rounded-xl border font-semibold text-sm tracking-wide hover:scale-[1.03] active:scale-[0.98] transition-all flex items-center gap-2 ${
-                  theme === 'dark' 
-                    ? 'border-gray-700 bg-gray-800/40 text-white hover:bg-gray-800' 
-                    : 'border-gray-200 bg-white text-gray-800 hover:bg-gray-50 shadow-md'
+                onClick={() => scrollToSection('#contact')}
+                className={`px-8 py-3.5 rounded-2xl font-mono text-xs sm:text-sm font-bold tracking-wider transition-all flex items-center gap-2 border ${
+                  isDark
+                    ? 'border-white/15 bg-white/5 text-gray-100 hover:text-white hover:bg-white/10 hover:border-white/30'
+                    : 'border-[#D8DCE5] bg-white text-[#090A0F] hover:border-accent-purple shadow-sm'
                 }`}
               >
-                <Download size={18} />
-                Download Resume
+                <span>LET'S TALK</span>
+                <ArrowUpRight size={15} />
               </button>
             </Magnetic>
           </motion.div>
 
-          {/* Social Links */}
+          {/* Social Quick Links & Proof Badges */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="flex items-center gap-5 mt-12"
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="mt-12 pt-6 border-t border-gray-200 dark:border-white/10 w-full flex flex-wrap items-center justify-between gap-4"
           >
-            <Magnetic range={40} strength={0.3}>
-              <a 
-                href="https://linkedin.com/in/karan-garg-244b242b1" 
-                target="_blank" 
+            {/* Social handles */}
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-gray-600 dark:text-gray-400 uppercase font-bold">Connect:</span>
+              <a
+                href={PERSONAL_INFO.github}
+                target="_blank"
                 rel="noopener noreferrer"
-                className={`w-12 h-12 flex items-center justify-center rounded-xl border transition-all ${
-                  theme === 'dark'
-                    ? 'border-gray-800 bg-gray-900/40 hover:bg-gray-800/80 text-gray-400 hover:text-white'
-                    : 'border-gray-200 bg-white hover:bg-gray-50 text-gray-600 hover:text-indigo-600 shadow-sm'
+                className={`p-2 rounded-xl border transition-colors ${
+                  isDark
+                    ? 'border-white/10 bg-white/5 text-gray-200 hover:text-white hover:border-accent-purple/50'
+                    : 'border-[#D8DCE5] bg-white text-[#090A0F] hover:border-accent-purple shadow-sm'
                 }`}
-                aria-label="LinkedIn Profile"
+                aria-label="GitHub"
               >
-                <FaLinkedin size={20} />
+                <FaGithub size={14} />
               </a>
-            </Magnetic>
-            <Magnetic range={40} strength={0.3}>
-              <a 
-                href="https://github.com/Drakowarrior" 
-                target="_blank" 
+              <a
+                href={PERSONAL_INFO.linkedin}
+                target="_blank"
                 rel="noopener noreferrer"
-                className={`w-12 h-12 flex items-center justify-center rounded-xl border transition-all ${
-                  theme === 'dark'
-                    ? 'border-gray-800 bg-gray-900/40 hover:bg-gray-800/80 text-gray-400 hover:text-white'
-                    : 'border-gray-200 bg-white hover:bg-gray-50 text-gray-600 hover:text-black shadow-sm'
+                className={`p-2 rounded-xl border transition-colors ${
+                  isDark
+                    ? 'border-white/10 bg-white/5 text-gray-200 hover:text-white hover:border-accent-blue/50'
+                    : 'border-[#D8DCE5] bg-white text-[#090A0F] hover:border-[#4F46E5] shadow-sm'
                 }`}
-                aria-label="GitHub Profile"
+                aria-label="LinkedIn"
               >
-                <FaGithub size={20} />
+                <FaLinkedin size={14} />
               </a>
-            </Magnetic>
-            <Magnetic range={40} strength={0.3}>
-              <a 
-                href="mailto:unisoldier2022@gmail.com" 
-                className={`w-12 h-12 flex items-center justify-center rounded-xl border transition-all ${
-                  theme === 'dark'
-                    ? 'border-gray-800 bg-gray-900/40 hover:bg-gray-800/80 text-gray-400 hover:text-white'
-                    : 'border-gray-200 bg-white hover:bg-gray-50 text-gray-600 hover:text-rose-500 shadow-sm'
+              <a
+                href={`mailto:${PERSONAL_INFO.email}`}
+                className={`p-2 rounded-xl border transition-colors ${
+                  isDark
+                    ? 'border-white/10 bg-white/5 text-gray-200 hover:text-white hover:border-accent-cyan/50'
+                    : 'border-[#D8DCE5] bg-white text-[#090A0F] hover:border-accent-purple shadow-sm'
                 }`}
-                aria-label="Email Me"
+                aria-label="Email"
               >
-                <FaEnvelope size={20} />
+                <FaEnvelope size={14} />
               </a>
-            </Magnetic>
+            </div>
+
+            {/* Quick architectural badges */}
+            <div className="flex flex-wrap items-center gap-2">
+              <div className={`flex items-center gap-1.5 px-3 py-1 rounded-xl border text-xs font-mono font-bold ${
+                isDark ? 'border-white/10 bg-white/5 text-gray-200' : 'border-[#D8DCE5] bg-white text-[#090A0F] shadow-sm'
+              }`}>
+                <Cpu size={12} className="text-accent-purple" />
+                <span>LLM Architectures</span>
+              </div>
+              <div className={`flex items-center gap-1.5 px-3 py-1 rounded-xl border text-xs font-mono font-bold ${
+                isDark ? 'border-white/10 bg-white/5 text-gray-200' : 'border-[#D8DCE5] bg-white text-[#090A0F] shadow-sm'
+              }`}>
+                <Network size={12} className="text-accent-cyan" />
+                <span>FastAPI + React</span>
+              </div>
+              <div className={`flex items-center gap-1.5 px-3 py-1 rounded-xl border text-xs font-mono font-bold ${
+                isDark ? 'border-white/10 bg-white/5 text-gray-200' : 'border-[#D8DCE5] bg-white text-[#090A0F] shadow-sm'
+              }`}>
+                <Database size={12} className="text-emerald-500" />
+                <span>Vector RAG</span>
+              </div>
+            </div>
           </motion.div>
+
         </div>
-
-        {/* Right 3D Model Column */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, ease: 'easeOut' }}
-          className="md:col-span-5 h-[350px] md:h-[500px] w-full flex items-center justify-center relative cursor-grab active:cursor-grabbing"
-          style={{ 
-            transform: `translate3d(${mousePos.x * 12}px, ${mousePos.y * 12}px, 0)`,
-            transition: 'transform 0.2s cubic-bezier(0.25, 1, 0.5, 1)'
-          }}
-        >
-          {/* Subtle surrounding glow ring */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-accent-purple/10 to-accent-cyan/10 rounded-full filter blur-3xl opacity-30 animate-pulse pointer-events-none"></div>
-          
-          <Canvas
-            camera={{ position: [0, 0, 4.5], fov: 45 }}
-            gl={{ antialias: true, alpha: true }}
-          >
-            <ambientLight intensity={theme === 'dark' ? 0.4 : 0.8} />
-            <pointLight position={[5, 5, 5]} intensity={1.5} color={theme === 'dark' ? '#a78bfa' : '#6366f1'} />
-            <pointLight position={[-5, -5, -5]} intensity={0.8} color={theme === 'dark' ? '#22d3ee' : '#0ea5e9'} />
-            
-            <Suspense fallback={null}>
-              <DNAHelix theme={theme} />
-            </Suspense>
-            <OrbitControls enableZoom={false} />
-          </Canvas>
-        </motion.div>
       </div>
     </section>
   );

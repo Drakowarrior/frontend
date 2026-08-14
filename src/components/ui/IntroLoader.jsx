@@ -3,25 +3,33 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const IntroLoader = ({ theme, onComplete }) => {
   const [loading, setLoading] = useState(true);
+  const [stage, setStage] = useState(0); // 0: KG, 1: AI ENGINEER, 2: FULL-STACK DEVELOPER
 
   useEffect(() => {
-    // Check if user has already seen the intro during this session
-    const hasSeenIntro = sessionStorage.getItem('portfolio_intro_seen');
+    const hasSeenIntro = sessionStorage.getItem('kg_intro_seen');
     if (hasSeenIntro) {
       setLoading(false);
       if (onComplete) onComplete();
       return;
     }
 
-    const timer = setTimeout(() => {
-      handleComplete();
-    }, 2200);
+    const stage1Timer = setTimeout(() => setStage(1), 500);
+    const stage2Timer = setTimeout(() => setStage(2), 1000);
+    const finishTimer = setTimeout(() => {
+      sessionStorage.setItem('kg_intro_seen', 'true');
+      setLoading(false);
+      if (onComplete) onComplete();
+    }, 1800);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(stage1Timer);
+      clearTimeout(stage2Timer);
+      clearTimeout(finishTimer);
+    };
   }, [onComplete]);
 
-  const handleComplete = () => {
-    sessionStorage.setItem('portfolio_intro_seen', 'true');
+  const handleSkip = () => {
+    sessionStorage.setItem('kg_intro_seen', 'true');
     setLoading(false);
     if (onComplete) onComplete();
   };
@@ -35,82 +43,95 @@ const IntroLoader = ({ theme, onComplete }) => {
           initial={{ opacity: 1 }}
           exit={{ 
             opacity: 0, 
-            y: -100,
-            transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] } 
+            clipPath: 'polygon(0 0, 100% 0, 100% 0, 0 0)',
+            transition: { duration: 0.7, ease: [0.76, 0, 0.24, 1] } 
           }}
-          className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center ${
-            isDark ? 'bg-[#05070c]' : 'bg-[#f1f5f9]'
+          className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center select-none ${
+            isDark ? 'bg-[#06080d]' : 'bg-[#f8fafc]'
           }`}
+          style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' }}
         >
-          {/* Main Logo & Text animation */}
-          <div className="flex flex-col items-center">
-            {/* 3D Looking Rotating Ring Logo */}
+          {/* Subtle Ambient Glow */}
+          <div className="absolute w-96 h-96 rounded-full bg-accent-purple/15 blur-3xl pointer-events-none animate-pulse-glow" />
+
+          <div className="flex flex-col items-center relative z-10">
+            {/* Monogram / Official Logo */}
             <motion.div
-              initial={{ scale: 0.5, opacity: 0, rotate: -45 }}
-              animate={{ 
-                scale: 1, 
-                opacity: 1, 
-                rotate: 315,
-                transition: { duration: 1.2, ease: [0.34, 1.56, 0.64, 1] }
-              }}
-              className="h-20 w-20 flex items-center justify-center rounded-2xl bg-gradient-to-tr from-accent-purple via-accent-blue to-accent-cyan shadow-2xl shadow-accent-purple/35 mb-6"
+              initial={{ scale: 0.6, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className="relative mb-6"
             >
-              <motion.span 
-                initial={{ opacity: 0, scale: 0.3 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5, duration: 0.5 }}
-                className="font-display font-black text-white text-3xl tracking-wider"
-              >
-                KG
-              </motion.span>
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-accent-violet via-accent-ultraviolet to-accent-cyan p-[2px] shadow-glow-violet overflow-hidden flex items-center justify-center">
+                <div className={`w-full h-full rounded-[14px] flex items-center justify-center p-2 ${isDark ? 'bg-[#06080d]' : 'bg-white'}`}>
+                  <img
+                    src={process.env.PUBLIC_URL + '/karan_logo-removebg-preview.png'}
+                    alt="Karan Garg Logo"
+                    className="w-full h-full object-contain filter drop-shadow animate-pulse"
+                  />
+                </div>
+              </div>
             </motion.div>
 
-            {/* Title / Name Letter by Letter Draw */}
-            <div className="overflow-hidden">
-              <motion.h1
-                initial={{ y: 50 }}
-                animate={{ y: 0 }}
-                transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.4 }}
-                className="font-display font-black text-2xl tracking-[0.2em] uppercase"
-                style={{ color: isDark ? '#ffffff' : '#0f172a' }}
-              >
-                Karan Garg
-              </motion.h1>
+            {/* Cinematic Text Reveal Sequence */}
+            <div className="h-10 flex items-center justify-center overflow-hidden">
+              <AnimatePresence mode="wait">
+                {stage === 0 && (
+                  <motion.span
+                    key="name"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -20, opacity: 0 }}
+                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                    className="font-display font-extrabold text-xl sm:text-2xl tracking-[0.25em] text-white"
+                  >
+                    KARAN GARG
+                  </motion.span>
+                )}
+                {stage === 1 && (
+                  <motion.span
+                    key="ai"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -20, opacity: 0 }}
+                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                    className="font-mono text-sm sm:text-base font-semibold tracking-[0.25em] text-accent-cyan"
+                  >
+                    AI ENGINEER
+                  </motion.span>
+                )}
+                {stage === 2 && (
+                  <motion.span
+                    key="fullstack"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -20, opacity: 0 }}
+                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                    className="font-mono text-sm sm:text-base font-semibold tracking-[0.25em] text-accent-purple"
+                  >
+                    FULL-STACK DEVELOPER
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </div>
 
-            {/* Small divider line */}
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: 80 }}
-              transition={{ duration: 1, delay: 0.6 }}
-              className="h-[2px] bg-gradient-to-r from-accent-purple to-accent-cyan mt-3 rounded-full"
-            />
-
-            {/* Subtitle */}
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9, duration: 0.5 }}
-              className="text-xs tracking-[0.1em] text-gray-500 uppercase mt-2 font-medium"
-            >
-              AI & Bioscience portfolio
-            </motion.p>
+            {/* Progress line */}
+            <div className="w-36 h-[2px] bg-gray-800 rounded-full mt-5 overflow-hidden">
+              <motion.div
+                initial={{ width: '0%' }}
+                animate={{ width: '100%' }}
+                transition={{ duration: 1.6, ease: 'easeInOut' }}
+                className="h-full bg-gradient-to-r from-accent-violet via-accent-cyan to-accent-purple"
+              />
+            </div>
           </div>
 
-          {/* Skip Button */}
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-            onClick={handleComplete}
-            className={`absolute bottom-8 right-8 px-4 py-2 rounded-xl border text-[10px] font-bold tracking-widest uppercase transition-colors duration-300 ${
-              isDark 
-                ? 'border-gray-800 bg-gray-900/40 text-gray-400 hover:border-gray-700 hover:text-white' 
-                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:text-black'
-            }`}
+          <button
+            onClick={handleSkip}
+            className="absolute bottom-8 text-xs font-mono tracking-widest text-gray-500 hover:text-gray-300 transition-colors uppercase"
           >
-            Skip Intro
-          </motion.button>
+            [ Skip ]
+          </button>
         </motion.div>
       )}
     </AnimatePresence>

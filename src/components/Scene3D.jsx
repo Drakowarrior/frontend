@@ -1,238 +1,305 @@
-import React, { useRef, useState, useEffect, Suspense, useMemo } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Points, PointMaterial } from '@react-three/drei';
-import * as THREE from 'three';
-
-// Random points generator for particle space
-const generateRandomPoints = (count, radius = 8) => {
-  const points = new Float32Array(count * 3);
-  for (let i = 0; i < count; i++) {
-    const theta = THREE.MathUtils.randFloatSpread(360);
-    const phi = THREE.MathUtils.randFloatSpread(360);
-    
-    points[i * 3] = radius * Math.sin(theta) * Math.cos(phi);
-    points[i * 3 + 1] = radius * Math.sin(theta) * Math.sin(phi);
-    points[i * 3 + 2] = radius * Math.cos(theta);
-  }
-  return points;
-};
-
-// 3D deforming mathematical waving landscape grid
-const WavyLandscape = ({ theme }) => {
-  const meshRef = useRef();
-  const isDark = theme === 'dark';
-
-  const gridColor = isDark ? '#0ea5e9' : '#3b82f6';
-
-  // Plane settings
-  const width = 18;
-  const height = 12;
-  const widthSeg = 36;
-  const heightSeg = 24;
-
-  // Track coordinates of plane vertices to compute wave heights
-  useFrame((state) => {
-    const time = state.clock.getElapsedTime();
-    if (!meshRef.current) return;
-
-    const geo = meshRef.current.geometry;
-    const posAttr = geo.attributes.position;
-    
-    for (let i = 0; i < posAttr.count; i++) {
-      const x = posAttr.getX(i);
-      const y = posAttr.getY(i);
-      
-      // Multi-sine mathematical wave formula for a dynamic organic look
-      const z = Math.sin(x * 0.3 + time * 0.8) * Math.cos(y * 0.3 + time * 0.8) * 0.3 + 
-                Math.sin(x * 0.1 - time * 0.4) * 0.15;
-      
-      posAttr.setZ(i, z);
-    }
-    
-    posAttr.needsUpdate = true;
-
-    // React to pointer coordinates
-    const targetRotX = -Math.PI / 3.2 + state.pointer.y * 0.04;
-    const targetRotZ = state.pointer.x * 0.05;
-    meshRef.current.rotation.x += (targetRotX - meshRef.current.rotation.x) * 0.05;
-    meshRef.current.rotation.z += (targetRotZ - meshRef.current.rotation.z) * 0.05;
-  });
-
-  return (
-    <mesh 
-      ref={meshRef} 
-      position={[0, -2.2, -1.5]} 
-      rotation={[-Math.PI / 3.2, 0, 0]}
-    >
-      <planeGeometry args={[width, height, widthSeg, heightSeg]} />
-      <meshStandardMaterial 
-        color={gridColor} 
-        wireframe 
-        transparent 
-        opacity={isDark ? 0.18 : 0.08}
-        roughness={0.5}
-        metalness={0.2}
-      />
-    </mesh>
-  );
-};
-
-// Low poly floating shape elements
-const FloatingMesh = ({ theme }) => {
-  const meshRef = useRef();
-  const [speed] = useState(() => Math.random() * 0.4 + 0.2);
-  const [rotationSpeed] = useState(() => ({
-    x: Math.random() * 0.008 - 0.004,
-    y: Math.random() * 0.008 - 0.004,
-  }));
-  const [position] = useState(() => [
-    THREE.MathUtils.randFloatSpread(10),
-    THREE.MathUtils.randFloatSpread(6) + 1,
-    THREE.MathUtils.randFloatSpread(4) - 4
-  ]);
-
-  useFrame((state) => {
-    const time = state.clock.getElapsedTime();
-    meshRef.current.position.y = position[1] + Math.sin(time * speed) * 0.25;
-    meshRef.current.rotation.x += rotationSpeed.x;
-    meshRef.current.rotation.y += rotationSpeed.y;
-  });
-
-  const meshColor = theme === 'dark' ? '#8b5cf6' : '#6366f1';
-
-  return (
-    <mesh ref={meshRef} position={position}>
-      <icosahedronGeometry args={[0.25, 0]} />
-      <meshStandardMaterial 
-        color={meshColor} 
-        wireframe
-        transparent
-        opacity={theme === 'dark' ? 0.22 : 0.1}
-      />
-    </mesh>
-  );
-};
-
-// Floating background space particles
-const Particles = ({ theme, isMobile }) => {
-  const ref = useRef();
-  const pointsCount = isMobile ? 250 : 800;
-  
-  const sphere = useMemo(() => generateRandomPoints(pointsCount, 7), [pointsCount]);
-
-  useFrame((state) => {
-    const time = state.clock.getElapsedTime();
-    // Slow rotational drift
-    ref.current.rotation.x = time * 0.015;
-    ref.current.rotation.y = time * 0.02;
-    
-    // React to pointer coordinates
-    const targetX = state.pointer.x * 0.4;
-    const targetY = state.pointer.y * 0.4;
-    ref.current.position.x += (targetX - ref.current.position.x) * 0.04;
-    ref.current.position.y += (targetY - ref.current.position.y) * 0.04;
-  });
-
-  const particleColor = theme === 'dark' ? '#22d3ee' : '#3b82f6';
-
-  return (
-    <group rotation={[0, 0, Math.PI / 6]}>
-      <Points ref={ref} positions={sphere} stride={3} frustumCulled={false}>
-        <PointMaterial
-          transparent
-          color={particleColor}
-          size={isMobile ? 0.025 : 0.04}
-          sizeAttenuation={true}
-          depthWrite={false}
-          opacity={theme === 'dark' ? 0.55 : 0.3}
-        />
-      </Points>
-    </group>
-  );
-};
-
-// Handle camera adjustments based on scroll position
-const ScrollTracker = () => {
-  const { camera } = useThree();
-  
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
-      // Zoom out and tilt camera down slightly as user scrolls
-      camera.position.z = 5.5 + scrollPercent * 2.2;
-      camera.position.y = -scrollPercent * 0.5;
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [camera]);
-
-  return null;
-};
+import React, { useRef, useEffect, useState } from 'react';
 
 const Scene3D = ({ theme }) => {
-  const [isMobile, setIsMobile] = useState(false);
-  const [isTabActive, setIsTabActive] = useState(true);
+  const canvasRef = useRef(null);
+  const isDark = theme === 'dark';
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    const handleVisibilityChange = () => {
-      setIsTabActive(!document.hidden);
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      window.removeEventListener('resize', checkMobile);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mediaQuery.matches);
+    const handler = (e) => setReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
   }, []);
 
-  if (!isTabActive) return null;
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let animationFrameId;
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    const handleResize = () => {
+      if (!canvas) return;
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      initSystem();
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Mouse & Scroll coordinates
+    let mouse = {
+      x: width / 2,
+      y: height / 2,
+      targetX: width / 2,
+      targetY: height / 2,
+      radius: 220,
+      isHovered: false,
+    };
+
+    let scrollOffset = 0;
+
+    const handleMouseMove = (e) => {
+      mouse.targetX = e.clientX;
+      mouse.targetY = e.clientY;
+      mouse.isHovered = true;
+    };
+
+    const handleScroll = () => {
+      scrollOffset = window.scrollY * 0.0015;
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // 4D / 3D AI Neural Core Node Geometry
+    const isMobile = width < 768;
+    const nodeCount = isMobile ? 32 : 68;
+    let nodes = [];
+    let orbitalRings = [];
+
+    const initSystem = () => {
+      nodes = [];
+      for (let i = 0; i < nodeCount; i++) {
+        // Spherical coordinate distribution for 3D/4D neural shell
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(Math.random() * 2 - 1);
+        const radius = isMobile ? 90 + Math.random() * 110 : 130 + Math.random() * 240;
+
+        nodes.push({
+          x3d: radius * Math.sin(phi) * Math.cos(theta),
+          y3d: radius * Math.sin(phi) * Math.sin(theta),
+          z3d: radius * Math.cos(phi),
+          w4d: Math.random() * Math.PI * 2, // 4th dimension phase
+          speed: 0.003 + Math.random() * 0.004,
+          radius: Math.random() * 2.2 + 1.2,
+          color: i % 3 === 0 ? '#8b5cf6' : i % 3 === 1 ? '#06b6d4' : '#6366f1',
+          lightColor: i % 3 === 0 ? '#6d4aff' : i % 3 === 1 ? '#0891b2' : '#4f46e5',
+        });
+      }
+
+      orbitalRings = [
+        { radius: isMobile ? 120 : 200, tiltX: 0.6, tiltY: 0.3, speed: 0.008, color: '#8b5cf6' },
+        { radius: isMobile ? 160 : 280, tiltX: -0.4, tiltY: 0.8, speed: -0.006, color: '#06b6d4' },
+        { radius: isMobile ? 200 : 340, tiltX: 0.9, tiltY: -0.5, speed: 0.004, color: '#6366f1' },
+      ];
+    };
+
+    initSystem();
+
+    let rotationAngleX = 0;
+    let rotationAngleY = 0;
+    let time4D = 0;
+
+    const render = () => {
+      time4D += 0.012;
+      mouse.x += (mouse.targetX - mouse.x) * 0.06;
+      mouse.y += (mouse.targetY - mouse.y) * 0.06;
+
+      // Parallax rotation influenced by mouse + scroll
+      const targetRotX = (mouse.y / height - 0.5) * 0.8 + scrollOffset;
+      const targetRotY = (mouse.x / width - 0.5) * 1.2 + scrollOffset * 0.8;
+      
+      if (!reducedMotion) {
+        rotationAngleX += (targetRotX - rotationAngleX) * 0.05;
+        rotationAngleY += (targetRotY - rotationAngleY) * 0.05;
+      }
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Render Ambient Spotlight
+      const spotGrad = ctx.createRadialGradient(
+        mouse.x,
+        mouse.y,
+        20,
+        mouse.x,
+        mouse.y,
+        380
+      );
+      if (isDark) {
+        spotGrad.addColorStop(0, 'rgba(124, 58, 237, 0.09)');
+        spotGrad.addColorStop(0.5, 'rgba(6, 182, 212, 0.035)');
+        spotGrad.addColorStop(1, 'transparent');
+      } else {
+        spotGrad.addColorStop(0, 'rgba(109, 74, 255, 0.06)');
+        spotGrad.addColorStop(0.5, 'rgba(8, 145, 178, 0.02)');
+        spotGrad.addColorStop(1, 'transparent');
+      }
+      ctx.fillStyle = spotGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      const centerX = width * 0.5;
+      const centerY = height * 0.45;
+      const fov = 400;
+
+      // Render Central Volumetric Core
+      const corePulse = Math.sin(time4D * 1.5) * 0.15 + 1;
+      const coreRadius = (isMobile ? 22 : 36) * corePulse;
+      const coreGrad = ctx.createRadialGradient(
+        centerX,
+        centerY,
+        0,
+        centerX,
+        centerY,
+        coreRadius * 2.8
+      );
+      if (isDark) {
+        coreGrad.addColorStop(0, 'rgba(139, 92, 246, 0.45)');
+        coreGrad.addColorStop(0.4, 'rgba(6, 182, 212, 0.2)');
+        coreGrad.addColorStop(1, 'transparent');
+      } else {
+        coreGrad.addColorStop(0, 'rgba(109, 74, 255, 0.35)');
+        coreGrad.addColorStop(0.4, 'rgba(8, 145, 178, 0.12)');
+        coreGrad.addColorStop(1, 'transparent');
+      }
+      ctx.fillStyle = coreGrad;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, coreRadius * 2.8, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Render Orbital 4D Data Rings
+      orbitalRings.forEach((ring, rIdx) => {
+        const currentRot = time4D * ring.speed;
+        ctx.beginPath();
+        const steps = 60;
+        for (let s = 0; s <= steps; s++) {
+          const a = (s / steps) * Math.PI * 2;
+          // 3D rotation of ring
+          let rx = Math.cos(a) * ring.radius;
+          let ry = Math.sin(a) * ring.radius * Math.cos(ring.tiltX);
+          let rz = Math.sin(a) * ring.radius * Math.sin(ring.tiltX);
+
+          // Apply global rotation
+          const cosY = Math.cos(rotationAngleY + currentRot);
+          const sinY = Math.sin(rotationAngleY + currentRot);
+          const xRot = rx * cosY - rz * sinY;
+          const zRot = rx * sinY + rz * cosY;
+
+          const scale = fov / (fov + zRot);
+          const screenX = centerX + xRot * scale;
+          const screenY = centerY + ry * scale;
+
+          if (s === 0) {
+            ctx.moveTo(screenX, screenY);
+          } else {
+            ctx.lineTo(screenX, screenY);
+          }
+        }
+        ctx.strokeStyle = isDark
+          ? (rIdx === 0 ? 'rgba(139, 92, 246, 0.2)' : rIdx === 1 ? 'rgba(6, 182, 212, 0.15)' : 'rgba(99, 102, 241, 0.15)')
+          : (rIdx === 0 ? 'rgba(109, 74, 255, 0.16)' : rIdx === 1 ? 'rgba(8, 145, 178, 0.14)' : 'rgba(79, 70, 229, 0.12)');
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
+
+      // Project and render 3D/4D Nodes & Synapses
+      let projectedNodes = [];
+
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+        
+        // 4th dimension harmonic rotation (w4d)
+        node.w4d += node.speed;
+        const wMod = Math.sin(node.w4d + time4D) * 0.2 + 1;
+
+        let x = node.x3d * wMod;
+        let y = node.y3d * wMod;
+        let z = node.z3d * wMod;
+
+        // Apply X Rotation
+        const cosX = Math.cos(rotationAngleX);
+        const sinX = Math.sin(rotationAngleX);
+        const y1 = y * cosX - z * sinX;
+        const z1 = y * sinX + z * cosX;
+
+        // Apply Y Rotation
+        const cosY = Math.cos(rotationAngleY + time4D * 0.1);
+        const sinY = Math.sin(rotationAngleY + time4D * 0.1);
+        const x2 = x * cosY - z1 * sinY;
+        const z2 = x * sinY + z1 * cosY;
+
+        const scale = fov / (fov + z2 + 350);
+        const screenX = centerX + x2 * scale;
+        const screenY = centerY + y1 * scale;
+
+        projectedNodes.push({
+          x: screenX,
+          y: screenY,
+          z: z2,
+          scale,
+          radius: node.radius * scale,
+          color: isDark ? node.color : node.lightColor,
+        });
+      }
+
+      // Draw Connections (Synapses)
+      const maxDist = isMobile ? 85 : 120;
+      for (let i = 0; i < projectedNodes.length; i++) {
+        const p1 = projectedNodes[i];
+        for (let j = i + 1; j < projectedNodes.length; j++) {
+          const p2 = projectedNodes[j];
+          const dx = p1.x - p2.x;
+          const dy = p1.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < maxDist) {
+            const alpha = (1 - dist / maxDist) * (isDark ? 0.22 : 0.15) * p1.scale;
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = isDark
+              ? `rgba(139, 92, 246, ${alpha})`
+              : `rgba(109, 74, 255, ${alpha})`;
+            ctx.lineWidth = 0.8 * p1.scale;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw Node Spheres with Depth
+      projectedNodes.sort((a, b) => a.z - b.z);
+      for (let i = 0; i < projectedNodes.length; i++) {
+        const p = projectedNodes[i];
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, Math.max(1, p.radius), 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.min(1, Math.max(0.2, (p.scale - 0.3) * 1.5));
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+      }
+
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('scroll', handleScroll);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [isDark, reducedMotion]);
 
   return (
-    <div className="fixed inset-0 w-full h-full -z-10 pointer-events-none transition-colors duration-300">
-      <Canvas
-        camera={{ position: [0, 0, 5.5], fov: 55 }}
-        gl={{ antialias: true, alpha: true }}
-      >
-        <Suspense fallback={null}>
-          <ambientLight intensity={theme === 'dark' ? 0.35 : 0.75} />
-          
-          <pointLight 
-            position={[10, 8, 10]} 
-            intensity={theme === 'dark' ? 1.0 : 1.6} 
-            color={theme === 'dark' ? '#8b5cf6' : '#3b82f6'}
-          />
-          <pointLight 
-            position={[-10, -8, -10]} 
-            intensity={0.5} 
-            color={theme === 'dark' ? '#06b6d4' : '#22d3ee'}
-          />
-          
-          {/* 3D Wave Grid Landscape */}
-          <WavyLandscape theme={theme} />
-          
-          {/* Floating space particles */}
-          <Particles theme={theme} isMobile={isMobile} />
-          
-          {/* Floating low poly elements (only on desktop for speed) */}
-          {!isMobile && (
-            <>
-              <FloatingMesh theme={theme} />
-              <FloatingMesh theme={theme} />
-              <FloatingMesh theme={theme} />
-              <FloatingMesh theme={theme} />
-            </>
-          )}
-          
-          <ScrollTracker />
-        </Suspense>
-      </Canvas>
+    <div className="fixed inset-0 w-full h-full -z-10 pointer-events-none overflow-hidden transition-colors duration-500">
+      {/* Background layer 1: Subtle tech grid */}
+      <div className={`absolute inset-0 ${isDark ? 'bg-grid-pattern opacity-60' : 'bg-grid-pattern-light opacity-80'}`} />
+
+      {/* Background layer 2: Static atmospheric lighting */}
+      <div className={`absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full blur-[140px] pointer-events-none transition-colors duration-500 ${
+        isDark ? 'bg-accent-violet/10' : 'bg-purple-200/25'
+      }`} />
+      <div className={`absolute top-1/2 -right-40 w-[650px] h-[650px] rounded-full blur-[160px] pointer-events-none transition-colors duration-500 ${
+        isDark ? 'bg-accent-cyan/8' : 'bg-cyan-100/35'
+      }`} />
+
+      {/* Background layer 3: Canvas for 4D AI Neural Core */}
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
     </div>
   );
 };

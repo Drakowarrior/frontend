@@ -1,140 +1,132 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Terminal, Globe, Brain, BarChart3, Eye, Database, 
-  Layers, Wrench, MessageSquare, Dna, Sparkles 
+  Brain, MessageSquare, Code, Eye, Database, 
+  Layers, Dna, Sparkles, Terminal 
 } from 'lucide-react';
-import Tilt3D from './ui/Tilt3D';
+import { SKILL_CATEGORIES } from '../data/portfolioData';
 
 const Skills = ({ theme }) => {
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const isDark = theme === 'dark';
-  const cardStyle = isDark ? 'glass-card-dark' : 'glass-card-light';
 
-  const skillCategories = [
-    {
-      title: 'Programming',
-      icon: <Terminal className="w-5 h-5 text-accent-purple" />,
-      skills: ['Python', 'C', 'Java', 'JavaScript', 'SQL']
-    },
-    {
-      title: 'Web',
-      icon: <Globe className="w-5 h-5 text-accent-blue" />,
-      skills: ['React.js', 'HTML', 'CSS', 'JavaScript']
-    },
-    {
-      title: 'AI/ML',
-      icon: <Brain className="w-5 h-5 text-accent-cyan" />,
-      skills: ['Machine Learning', 'Deep Learning', 'Generative AI', 'Neural Networks']
-    },
-    {
-      title: 'Data Science',
-      icon: <BarChart3 className="w-5 h-5 text-emerald-500" />,
-      skills: ['Pandas', 'NumPy', 'Matplotlib']
-    },
-    {
-      title: 'Computer Vision',
-      icon: <Eye className="w-5 h-5 text-amber-500" />,
-      skills: ['OpenCV', 'YOLO', 'Object Detection']
-    },
-    {
-      title: 'Databases',
-      icon: <Database className="w-5 h-5 text-rose-500" />,
-      skills: ['MySQL', 'MongoDB']
-    },
-    {
-      title: 'Frameworks',
-      icon: <Layers className="w-5 h-5 text-pink-500" />,
-      skills: ['TensorFlow', 'PyTorch', 'Keras', 'Scikit-learn']
-    },
-    {
-      title: 'Tools',
-      icon: <Wrench className="w-5 h-5 text-sky-500" />,
-      skills: ['Git', 'GitHub', 'VS Code', 'Postman', 'MATLAB']
-    },
-    {
-      title: 'NLP',
-      icon: <MessageSquare className="w-5 h-5 text-indigo-500" />,
-      skills: ['Text Processing', 'Language Models']
-    },
-    {
-      title: 'Bioinformatics',
-      icon: <Dna className="w-5 h-5 text-teal-500 animate-pulse" />,
-      skills: ['NCBI', 'GenBank', 'UniProt', 'PDB', 'BLAST', 'FASTA', 'Docking', 'NGS']
-    },
-    {
-      title: 'Others',
-      icon: <Sparkles className="w-5 h-5 text-yellow-500" />,
-      skills: ['Blender', 'Excel', 'PowerPoint', 'AutoCAD']
-    }
-  ];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.08 }
-    }
+  const categoryIcons = {
+    "AI / Machine Learning": <Brain className="w-4 h-4 text-accent-purple" />,
+    "NLP & LLM Systems": <MessageSquare className="w-4 h-4 text-accent-cyan" />,
+    "Full-Stack Development": <Code className="w-4 h-4 text-blue-500" />,
+    "Computer Vision": <Eye className="w-4 h-4 text-amber-500" />,
+    "Data Science & Databases": <Database className="w-4 h-4 text-emerald-500" />,
+    "Software Engineering & Cloud": <Layers className="w-4 h-4 text-pink-500" />,
+    "Bioinformatics": <Dna className="w-4 h-4 text-teal-500" />,
+    "Design & Productivity": <Sparkles className="w-4 h-4 text-yellow-500" />
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, scale: 0.95, y: 20 },
-    visible: { 
-      opacity: 1, 
-      scale: 1, 
-      y: 0,
-      transition: { duration: 0.5 }
-    }
-  };
+  const filteredCategories = selectedCategory === 'All'
+    ? SKILL_CATEGORIES
+    : SKILL_CATEGORIES.filter((c) => c.title === selectedCategory);
 
   return (
-    <section id="skills" className="py-24 px-6 relative">
-      <div className="max-w-7xl w-full mx-auto relative z-10">
+    <section id="skills" className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <div className="max-w-6xl mx-auto relative z-10">
         
         {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-sm font-bold tracking-widest text-accent-purple uppercase mb-2">Skills</h2>
-          <h3 className="text-3xl sm:text-4xl font-extrabold font-display">My Technical Toolkit</h3>
-          <div className="w-16 h-1 bg-gradient-to-r from-accent-purple to-accent-cyan mx-auto mt-4 rounded-full"></div>
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-px w-8 bg-accent-purple" />
+              <span className="text-xs font-mono tracking-widest text-accent-purple dark:text-accent-cyan uppercase font-bold">
+                05 // SKILLS TAXONOMY
+              </span>
+            </div>
+            <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl tracking-tight text-gray-900 dark:text-white">
+              TECHNICAL <span className="text-gradient dark:text-gradient">CAPABILITIES</span>
+            </h2>
+          </div>
+          <p className="font-mono text-xs sm:text-sm text-gray-600 dark:text-gray-400 max-w-md">
+            Disciplined technical competencies across AI, machine learning, systems programming, and modern full-stack web platforms.
+          </p>
         </div>
 
-        {/* Skills Grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-        >
-          {skillCategories.map((category, index) => (
-            <motion.div key={index} variants={itemVariants}>
-              <Tilt3D className={`p-6 rounded-3xl ${cardStyle} h-full flex flex-col`}>
-                {/* Category Header */}
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2.5 rounded-xl bg-gray-500/10 flex items-center justify-center">
-                    {category.icon}
+        {/* Category Filter Pills */}
+        <div className="flex flex-wrap gap-1.5 mb-8">
+          <button
+            onClick={() => setSelectedCategory('All')}
+            className={`px-3 py-1 rounded-xl font-mono text-xs tracking-wider transition-all font-bold ${
+              selectedCategory === 'All'
+                ? 'bg-gradient-to-r from-accent-purple to-accent-cyan text-white shadow-glow-purple'
+                : isDark
+                ? 'border border-white/10 bg-white/5 text-gray-400 hover:text-white hover:border-white/20'
+                : 'border border-[#D8DCE5] bg-white text-gray-700 hover:border-gray-400 shadow-sm'
+            }`}
+          >
+            ALL
+          </button>
+          {SKILL_CATEGORIES.map((cat) => (
+            <button
+              key={cat.title}
+              onClick={() => setSelectedCategory(cat.title)}
+              className={`px-3 py-1 rounded-xl font-mono text-xs tracking-wider transition-all flex items-center gap-1.5 font-semibold ${
+                selectedCategory === cat.title
+                  ? 'bg-gradient-to-r from-accent-purple to-accent-cyan text-white shadow-glow-purple font-bold'
+                  : isDark
+                  ? 'border border-white/10 bg-white/5 text-gray-400 hover:text-white hover:border-white/20'
+                  : 'border border-[#D8DCE5] bg-white text-gray-700 hover:border-gray-400 shadow-sm'
+              }`}
+            >
+              {categoryIcons[cat.title]}
+              <span>{cat.title}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Categorized Skills Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {filteredCategories.map((category, idx) => (
+            <motion.div
+              key={category.title}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.3, delay: idx * 0.03 }}
+              className={`p-5 rounded-3xl border transition-all duration-300 flex flex-col justify-between ${
+                isDark
+                  ? 'glass-card-dark border-white/10 bg-[#0c101d] hover:border-accent-purple/40'
+                  : 'glass-card-light bg-white border-[#D8DCE5] hover:border-accent-purple/30 shadow-sm'
+              }`}
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 rounded-lg bg-accent-purple/10 border border-accent-purple/20">
+                      {categoryIcons[category.title] || <Terminal className="w-3.5 h-3.5 text-accent-purple" />}
+                    </div>
+                    <h3 className="font-display font-bold text-xs sm:text-sm text-gray-900 dark:text-white">
+                      {category.title}
+                    </h3>
                   </div>
-                  <h4 className="font-display font-bold text-lg">{category.title}</h4>
+                  <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-accent-purple/10 text-accent-purple border border-accent-purple/20">
+                    {category.badge}
+                  </span>
                 </div>
 
-                {/* Chips */}
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {category.skills.map((skill, idx) => (
+                <div className="flex flex-wrap gap-1 mt-3">
+                  {category.skills.map((skill, sIdx) => (
                     <span
-                      key={idx}
-                      className={`text-xs font-semibold px-3 py-1.5 rounded-xl border transition-all duration-300 ${
-                        isDark 
-                          ? 'border-gray-800 bg-gray-900/60 text-gray-300 hover:border-accent-purple/50 hover:bg-gray-800 hover:text-white hover:shadow-glow-purple/20' 
-                          : 'border-gray-200 bg-white text-gray-600 hover:border-indigo-400 hover:bg-indigo-50/50 hover:text-indigo-600'
+                      key={sIdx}
+                      className={`px-2 py-0.5 rounded-lg text-xs font-mono border transition-all duration-200 ${
+                        isDark
+                          ? 'border-white/10 bg-white/5 text-gray-300 hover:border-accent-cyan/40 hover:text-white hover:bg-accent-cyan/10'
+                          : 'border-gray-200 bg-gray-50 text-gray-800 hover:border-accent-purple hover:bg-white font-medium'
                       }`}
                     >
                       {skill}
                     </span>
                   ))}
                 </div>
-              </Tilt3D>
+              </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
 
       </div>
     </section>

@@ -1,230 +1,128 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Briefcase, Terminal, Users, Calendar, MapPin } from 'lucide-react';
+import { Briefcase, Terminal, Users, Calendar, Zap } from 'lucide-react';
 import Tilt3D from './ui/Tilt3D';
+import { EXPERIENCES } from '../data/portfolioData';
 
 const Experience = ({ theme }) => {
   const isDark = theme === 'dark';
-  const cardStyle = isDark ? 'glass-card-dark' : 'glass-card-light';
 
-  const experiences = [
-    {
-      role: 'IT Trainee',
-      company: 'IGT Solutions (ATAIN)',
-      duration: 'June 2026 – Present',
-      location: 'Enterprise Development Hub',
-      icon: <Terminal className="w-5 h-5 text-accent-purple" />,
-      bullets: [
-        'Developing and enhancing an AI-powered chatbot for enterprise use cases.',
-        'Implementing intelligent conversation flows and user feedback mechanisms.',
-        'Managing user sessions and performing frontend/backend API integrations.',
-        'Iterating on UI/UX designs to optimize overall client-side usability.'
-      ]
-    },
-    {
-      role: 'Full Stack Development Intern',
-      company: 'Cognifyz Technologies',
-      duration: 'April 2026 – May 2026',
-      location: 'Remote',
-      icon: <Briefcase className="w-5 h-5 text-accent-blue" />,
-      bullets: [
-        'Built a complete Student Feedback System using the MERN stack (MongoDB, Express, React, Node.js).',
-        'Created secure REST APIs and structured CRUD operations for feedback submissions.',
-        'Designed a responsive dashboard for admins to visualize feedback data.'
-      ]
-    },
-    {
-      role: 'Executive, Corporate Relations & Social Media Joint Head',
-      company: 'DevForge Club',
-      duration: 'August 2024 – April 2026',
-      location: 'Manipal University Jaipur',
-      icon: <Users className="w-5 h-5 text-accent-cyan" />,
-      bullets: [
-        'Promoted from Social Media Joint Head to Executive of Corporate Relations.',
-        'Coordinated workshops, networking sessions, and promotional activities.',
-        'Led digital outreach campaigns to increase engagement and sponsor collaborations.'
-      ]
-    }
+  const icons = [
+    <Terminal className="w-4 h-4 text-accent-purple dark:text-accent-cyan" />,
+    <Briefcase className="w-4 h-4 text-blue-500" />,
+    <Users className="w-4 h-4 text-emerald-500" />
   ];
 
   return (
-    <section id="experience" className="py-24 px-6 relative">
-      <div className="max-w-7xl w-full mx-auto relative z-10">
+    <section id="experience" className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <div className="max-w-6xl mx-auto relative z-10">
         
         {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-sm font-bold tracking-widest text-accent-purple uppercase mb-2">Experience</h2>
-          <h3 className="text-3xl sm:text-4xl font-extrabold font-display">Work & Leadership</h3>
-          <div className="w-16 h-1 bg-gradient-to-r from-accent-purple to-accent-cyan mx-auto mt-4 rounded-full"></div>
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-px w-8 bg-accent-purple" />
+              <span className="text-xs font-mono tracking-widest text-accent-purple dark:text-accent-cyan uppercase font-bold">
+                06 // CAREER TIMELINE
+              </span>
+            </div>
+            <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl tracking-tight text-gray-900 dark:text-white">
+              EXPERIENCE & <span className="text-gradient dark:text-gradient">LEADERSHIP</span>
+            </h2>
+          </div>
+          <p className="font-mono text-xs sm:text-sm text-gray-600 dark:text-gray-400 max-w-md">
+            Industry roles, enterprise conversational AI engineering, full-stack implementations, and student club executive leadership.
+          </p>
         </div>
 
-        {/* Experience Timeline */}
-        <div className="relative max-w-5xl mx-auto">
-          {/* Vertical line left-aligned on mobile, center on desktop */}
-          <div className="absolute left-6 md:left-1/2 transform md:-translate-x-1/2 top-4 bottom-4 w-0.5 bg-gradient-to-b from-accent-purple via-accent-blue to-accent-cyan opacity-40"></div>
+        {/* Vertical Timeline - Tightened spacing */}
+        <div className="relative border-l border-gray-300 dark:border-white/15 ml-4 sm:ml-8 pl-6 sm:pl-8 space-y-8 sm:space-y-10">
+          {EXPERIENCES.map((exp, idx) => (
+            <motion.div
+              key={exp.id}
+              initial={{ opacity: 0, x: -15 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: idx * 0.08 }}
+              className="relative group"
+            >
+              {/* Timeline node icon on left rail */}
+              <div className={`absolute -left-[33px] sm:-left-[43px] top-5 w-7 h-7 sm:w-8 sm:h-8 rounded-xl border flex items-center justify-center shadow-md transition-colors ${
+                isDark
+                  ? 'bg-[#06080d] border-white/20 group-hover:border-accent-cyan'
+                  : 'bg-white border-gray-300 group-hover:border-accent-purple shadow-sm'
+              }`}>
+                {icons[idx] || <Briefcase size={14} className="text-accent-purple" />}
+              </div>
 
-          <div className="space-y-12">
-            {experiences.map((exp, idx) => {
-              const isEven = idx % 2 === 0;
-              return (
-                <div key={idx} className="relative flex flex-col md:flex-row items-stretch md:items-center justify-between w-full">
-                  {/* Left Side (Even: Card, Odd: Duration) */}
-                  <div className="w-full md:w-[45%] flex justify-end md:text-right text-left order-2 md:order-1 pl-16 md:pl-0 md:pr-8">
-                    {isEven ? (
-                      <motion.div
-                        initial={{ opacity: 0, x: -30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true, margin: "-100px" }}
-                        transition={{ duration: 0.6 }}
-                        className="w-full"
-                      >
-                        <Tilt3D className={`p-8 rounded-3xl ${cardStyle} text-left`}>
-                          <div className="md:hidden flex flex-wrap gap-2 items-center justify-between mb-4">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-accent-blue/10 border border-accent-blue/20 text-accent-blue text-xs font-semibold">
-                              <Calendar size={12} />
-                              {exp.duration}
-                            </span>
-                            <span className="text-xs text-gray-500 flex items-center gap-1">
-                              <MapPin size={12} />
-                              {exp.location}
-                            </span>
-                          </div>
+              {/* Experience Card */}
+              <Tilt3D maxTilt={2} scale={1.006}>
+                <div
+                  className={`p-5 sm:p-7 rounded-3xl border transition-all duration-300 ${
+                    isDark
+                      ? 'glass-card-dark border-white/10 bg-gradient-to-br from-[#0c101d] to-[#070912] hover:border-accent-purple/40'
+                      : 'glass-card-light bg-white border-[#D8DCE5] hover:border-accent-purple/40 shadow-sm'
+                  }`}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                    <div>
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-accent-purple/15 text-accent-purple border border-accent-purple/25">
+                          {exp.badge}
+                        </span>
+                        <span className="text-[11px] font-mono text-gray-500 dark:text-gray-400">
+                          • {exp.type}
+                        </span>
+                      </div>
+                      <h3 className="font-display font-black text-xl sm:text-2xl text-gray-900 dark:text-white">
+                        {exp.role}
+                      </h3>
+                      <h4 className="font-mono text-xs sm:text-sm font-bold text-accent-purple dark:text-accent-cyan">
+                        {exp.company}
+                      </h4>
+                    </div>
 
-                          <h4 className="text-xl font-bold font-display leading-tight">{exp.role}</h4>
-                          <h5 className="text-md font-semibold text-accent-purple mt-1">{exp.company}</h5>
-
-                          <ul className="mt-4 space-y-2.5">
-                            {exp.bullets.map((bullet, bIdx) => (
-                              <li key={bIdx} className="text-sm font-body leading-relaxed flex items-start gap-2.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-accent-cyan mt-2 shrink-0"></span>
-                                <span style={{ color: isDark ? '#9ca3af' : '#4b5563' }}>{bullet}</span>
-                              </li>
-                            ))}
-                          </ul>
-
-                          {/* Footer details for desktop */}
-                          <div className="hidden md:flex mt-6 items-center justify-between text-xs border-t pt-4" style={{ borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
-                            <span className="font-semibold text-gray-500 flex items-center gap-1">
-                              <Calendar size={13} />
-                              {exp.duration}
-                            </span>
-                            <span className="font-semibold text-gray-500 flex items-center gap-1">
-                              <MapPin size={13} />
-                              {exp.location}
-                            </span>
-                          </div>
-                        </Tilt3D>
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        initial={{ opacity: 0, x: -30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true, margin: "-100px" }}
-                        transition={{ duration: 0.6 }}
-                        className="hidden md:flex flex-col justify-center items-end space-y-2"
-                      >
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-blue/10 border border-accent-blue/20 text-accent-blue text-sm font-semibold">
-                          <Calendar size={14} />
-                          {exp.duration}
-                        </div>
-                        <div className="text-sm text-gray-500 flex items-center gap-1">
-                          <MapPin size={14} />
-                          {exp.location}
-                        </div>
-                      </motion.div>
-                    )}
+                    <div className={`flex items-center gap-1.5 px-3 py-1 rounded-xl border text-xs font-mono w-fit font-semibold ${
+                      isDark ? 'border-white/10 bg-white/5 text-gray-300' : 'border-gray-200 bg-gray-50 text-gray-700'
+                    }`}>
+                      <Calendar size={12} className="text-accent-purple dark:text-accent-cyan" />
+                      <span>{exp.period}</span>
+                    </div>
                   </div>
 
-                  {/* Bullet Marker */}
-                  <div className="absolute left-6 md:left-1/2 transform -translate-x-1/2 z-20 flex items-center justify-center top-0 md:top-auto">
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      whileInView={{ scale: 1 }}
-                      viewport={{ once: true, margin: "-100px" }}
-                      transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                      className={`w-12 h-12 rounded-full border-2 flex items-center justify-center shadow-lg ${
-                        isDark 
-                          ? 'bg-gray-900 border-accent-purple shadow-accent-purple/20' 
-                          : 'bg-white border-indigo-600 shadow-indigo-100'
-                      }`}
-                    >
-                      {exp.icon}
-                    </motion.div>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-normal mb-4">
+                    {exp.summary}
+                  </p>
+
+                  {/* Deliverables Bullet List */}
+                  <div className="space-y-1.5 pt-3 border-t border-gray-200 dark:border-white/10">
+                    {exp.deliverables.map((bullet, bIdx) => (
+                      <div key={bIdx} className="flex items-start gap-2 text-xs text-gray-700 dark:text-gray-300">
+                        <Zap size={13} className="text-accent-purple dark:text-accent-cyan shrink-0 mt-0.5" />
+                        <span>{bullet}</span>
+                      </div>
+                    ))}
                   </div>
 
-                  {/* Right Side (Even: Duration, Odd: Card) */}
-                  <div className="w-full md:w-[45%] flex justify-start text-left order-3 md:order-3 pl-16 md:pl-0 md:pl-8">
-                    {!isEven ? (
-                      <motion.div
-                        initial={{ opacity: 0, x: 30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true, margin: "-100px" }}
-                        transition={{ duration: 0.6 }}
-                        className="w-full"
+                  {/* Stack Chips */}
+                  <div className="flex flex-wrap gap-1.5 mt-4 pt-3 border-t border-gray-100 dark:border-white/5">
+                    {exp.stack.map((item, sIdx) => (
+                      <span
+                        key={sIdx}
+                        className="px-2 py-0.5 rounded-lg text-[11px] font-mono border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 text-gray-700 dark:text-gray-400 font-medium"
                       >
-                        <Tilt3D className={`p-8 rounded-3xl ${cardStyle} text-left`}>
-                          <div className="md:hidden flex flex-wrap gap-2 items-center justify-between mb-4">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-accent-blue/10 border border-accent-blue/20 text-accent-blue text-xs font-semibold">
-                              <Calendar size={12} />
-                              {exp.duration}
-                            </span>
-                            <span className="text-xs text-gray-500 flex items-center gap-1">
-                              <MapPin size={12} />
-                              {exp.location}
-                            </span>
-                          </div>
-
-                          <h4 className="text-xl font-bold font-display leading-tight">{exp.role}</h4>
-                          <h5 className="text-md font-semibold text-accent-purple mt-1">{exp.company}</h5>
-
-                          <ul className="mt-4 space-y-2.5">
-                            {exp.bullets.map((bullet, bIdx) => (
-                              <li key={bIdx} className="text-sm font-body leading-relaxed flex items-start gap-2.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-accent-cyan mt-2 shrink-0"></span>
-                                <span style={{ color: isDark ? '#9ca3af' : '#4b5563' }}>{bullet}</span>
-                              </li>
-                            ))}
-                          </ul>
-
-                          {/* Footer details for desktop */}
-                          <div className="hidden md:flex mt-6 items-center justify-between text-xs border-t pt-4" style={{ borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}>
-                            <span className="font-semibold text-gray-500 flex items-center gap-1">
-                              <Calendar size={13} />
-                              {exp.duration}
-                            </span>
-                            <span className="font-semibold text-gray-500 flex items-center gap-1">
-                              <MapPin size={13} />
-                              {exp.location}
-                            </span>
-                          </div>
-                        </Tilt3D>
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        initial={{ opacity: 0, x: 30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true, margin: "-100px" }}
-                        transition={{ duration: 0.6 }}
-                        className="hidden md:flex flex-col justify-center items-start space-y-2"
-                      >
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-blue/10 border border-accent-blue/20 text-accent-blue text-sm font-semibold">
-                          <Calendar size={14} />
-                          {exp.duration}
-                        </div>
-                        <div className="text-sm text-gray-500 flex items-center gap-1">
-                          <MapPin size={14} />
-                          {exp.location}
-                        </div>
-                      </motion.div>
-                    )}
+                        {item}
+                      </span>
+                    ))}
                   </div>
                 </div>
-              );
-            })}
+              </Tilt3D>
+            </motion.div>
+          ))}
         </div>
+
       </div>
-    </div>
-  </section>
+    </section>
   );
 };
 
