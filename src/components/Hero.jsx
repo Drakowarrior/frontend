@@ -18,41 +18,72 @@ const Hero = ({ theme }) => {
   }, [roles.length]);
 
   const scrollToSection = (id) => {
-    document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
+    const element = document.querySelector(id);
+    if (element) {
+      const navOffset = 100;
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - navOffset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
   };
 
   return (
     <section
       id="home"
-      className="relative min-h-[84vh] flex items-center justify-center pt-24 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      className="section-anchor relative z-10 min-h-[85vh] flex items-center justify-center pt-32 sm:pt-40 lg:pt-44 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden"
     >
+
+
+
       <div className="max-w-5xl w-full mx-auto relative z-10">
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
           
-          {/* Status Badge */}
+          {/* Status Badges */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-mono tracking-widest uppercase mb-6 font-bold ${
+            className="flex flex-wrap items-center justify-center gap-2 mb-6"
+          >
+            <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-mono tracking-widest uppercase font-bold ${
               isDark
                 ? 'border-accent-purple/30 bg-accent-purple/10 text-accent-cyan shadow-glow-purple/20'
                 : 'border-accent-purple/30 bg-purple-50 text-accent-purple shadow-sm'
-            }`}
-          >
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>AI ENGINEER • FULL-STACK DEVELOPER</span>
+            }`}>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>AI ENGINEER • FULL-STACK DEVELOPER</span>
+            </div>
+
+            <a
+              href="#publications"
+              onClick={(e) => {
+                e.preventDefault();
+                document.querySelector('#publications')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border text-xs font-mono tracking-wider uppercase font-bold transition-all hover:scale-105 ${
+                isDark
+                  ? 'border-accent-cyan/40 bg-accent-cyan/10 text-accent-cyan hover:border-accent-cyan'
+                  : 'border-accent-purple/30 bg-indigo-50 text-accent-purple hover:border-accent-purple shadow-sm'
+              }`}
+            >
+              <Sparkles size={12} className="text-accent-purple dark:text-accent-cyan" />
+              <span>PUBLISHED IN SPRINGER 2026 ↗</span>
+            </a>
           </motion.div>
 
-          {/* Prominent Name Header */}
+          {/* Prominent Name Header with Kinetic Responsive Scaling */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="font-display font-black text-6xl sm:text-8xl md:text-9xl tracking-tight leading-[0.98] text-gray-900 dark:text-white"
+            className="font-display font-black text-[clamp(3.5rem,10vw,7.5rem)] tracking-tight leading-[0.96] text-gray-900 dark:text-white select-none"
           >
             KARAN <span className="text-gradient dark:text-gradient">GARG</span>
           </motion.h1>
+
 
           {/* Core Tagline */}
           <motion.div

@@ -15,8 +15,10 @@ const Projects = ({ theme }) => {
   const isDark = theme === 'dark';
 
   return (
-    <section id="projects" className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <section id="projects" className="section-anchor py-8 sm:py-12 px-4 sm:px-6 lg:px-8 relative z-10 overflow-hidden">
       <div className="max-w-6xl mx-auto relative z-10">
+
+
         
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
@@ -251,21 +253,35 @@ const Projects = ({ theme }) => {
                     {/* Actions */}
                     <div className="mt-6 pt-5 border-t border-gray-200 dark:border-white/10 flex flex-wrap items-center gap-3">
                       <span className="px-4 py-2 rounded-xl font-mono text-xs font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 flex items-center gap-2">
-                        <span>COMING SOON</span>
+                        <span>PLATFORM COMING SOON</span>
                       </span>
-                      <a
-                        href={FEATURED_PROJECTS[1].github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`px-4 py-2 rounded-xl font-mono text-xs font-bold border flex items-center gap-2 transition-all ${
-                          isDark
-                            ? 'border-white/15 bg-white/5 text-gray-300 hover:text-white hover:bg-white/10'
-                            : 'border-[#D8DCE5] bg-white text-gray-800 hover:border-accent-purple'
-                        }`}
-                      >
-                        <FaGithub size={14} />
-                        <span>GITHUB</span>
-                      </a>
+                      {FEATURED_PROJECTS[1].github ? (
+                        <a
+                          href={FEATURED_PROJECTS[1].github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`px-4 py-2 rounded-xl font-mono text-xs font-bold border flex items-center gap-2 transition-all ${
+                            isDark
+                              ? 'border-white/15 bg-white/5 text-gray-300 hover:text-white hover:bg-white/10'
+                              : 'border-[#D8DCE5] bg-white text-gray-800 hover:border-accent-purple'
+                          }`}
+                        >
+                          <FaGithub size={14} />
+                          <span>GITHUB</span>
+                        </a>
+                      ) : (
+                        <span
+                          className={`px-4 py-2 rounded-xl font-mono text-xs font-bold border flex items-center gap-2 cursor-not-allowed opacity-75 ${
+                            isDark
+                              ? 'border-white/10 bg-white/5 text-gray-400'
+                              : 'border-gray-200 bg-gray-100 text-gray-500'
+                          }`}
+                          title="MedRAG private repository undergoing compliance sanitization"
+                        >
+                          <FaGithub size={14} />
+                          <span>REPO COMING SOON</span>
+                        </span>
+                      )}
                       <button
                         onClick={() => navigate('/projects/medrag')}
                         className="px-3 py-2 rounded-xl font-mono text-xs font-bold text-accent-purple dark:text-accent-cyan hover:underline flex items-center gap-1.5 ml-auto"
@@ -273,6 +289,7 @@ const Projects = ({ theme }) => {
                         <span>CASE STUDY</span>
                         <ArrowRight size={13} />
                       </button>
+
                     </div>
                   </div>
 

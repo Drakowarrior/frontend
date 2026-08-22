@@ -10,8 +10,10 @@ const Certificates = ({ theme }) => {
   const isDark = theme === 'dark';
 
   return (
-    <section id="certifications" className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <section id="certifications" className="section-anchor py-8 sm:py-12 px-4 sm:px-6 lg:px-8 relative z-10 overflow-hidden">
       <div className="max-w-6xl mx-auto relative z-10">
+
+
         
         {/* Header with Global Google Drive CTA */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">

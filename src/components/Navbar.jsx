@@ -19,6 +19,7 @@ const Navbar = ({ theme, setThemeMode, themeMode, systemIsDark }) => {
     { name: 'STACK', href: '#stack' },
     { name: 'EXPERIENCE', href: '#experience' },
     { name: 'CERTIFICATIONS', href: '#certifications' },
+    { name: 'RESEARCH', href: '#publications' },
     { name: 'CONTACT', href: '#contact' },
   ];
 
@@ -26,8 +27,9 @@ const Navbar = ({ theme, setThemeMode, themeMode, systemIsDark }) => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 25);
 
-      const sections = ['home', 'about', 'projects', 'pipeline', 'stack', 'experience', 'certifications', 'contact'];
+      const sections = ['home', 'about', 'projects', 'pipeline', 'stack', 'experience', 'certifications', 'publications', 'contact'];
       const scrollPos = window.scrollY + 220;
+
 
       for (const section of sections) {
         const el = document.getElementById(section);
@@ -54,7 +56,13 @@ const Navbar = ({ theme, setThemeMode, themeMode, systemIsDark }) => {
     }
     const element = document.querySelector(href);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      const navOffset = 100;
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - navOffset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
   };
 
@@ -65,10 +73,11 @@ const Navbar = ({ theme, setThemeMode, themeMode, systemIsDark }) => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 flex justify-center px-4 sm:px-6 ${
+      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 flex justify-center px-4 sm:px-6 ${
         scrolled ? 'py-2 sm:py-3' : 'py-5 sm:py-6'
       }`}
     >
+
       <nav
         className={`w-full max-w-5xl transition-all duration-300 rounded-full flex items-center justify-between px-4 sm:px-6 py-2 sm:py-2.5 ${
           scrolled

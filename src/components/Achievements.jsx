@@ -16,8 +16,9 @@ const Achievements = ({ theme }) => {
   ];
 
   return (
-    <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <section className="section-anchor py-8 sm:py-12 px-4 sm:px-6 lg:px-8 relative z-10 overflow-hidden">
       <div className="max-w-6xl mx-auto relative z-10">
+
         
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">

@@ -10,7 +10,8 @@ const sectionsList = [
   { id: 'experience', label: 'EXPERIENCE', num: '06' },
   { id: 'about', label: 'ABOUT', num: '07' },
   { id: 'certifications', label: 'CERTIFICATIONS', num: '08' },
-  { id: 'contact', label: 'CONTACT', num: '09' },
+  { id: 'publications', label: 'RESEARCH', num: '09' },
+  { id: 'contact', label: 'CONTACT', num: '10' },
 ];
 
 const ScrollProgressIndicator = ({ theme }) => {
@@ -24,7 +25,8 @@ const ScrollProgressIndicator = ({ theme }) => {
       const progress = totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
       setScrollProgress(progress);
 
-      const scrollPos = window.scrollY + 260;
+      const scrollPos = window.scrollY + 160;
+
       for (let i = sectionsList.length - 1; i >= 0; i--) {
         const el = document.getElementById(sectionsList[i].id);
         if (el && scrollPos >= el.offsetTop) {
@@ -47,12 +49,13 @@ const ScrollProgressIndicator = ({ theme }) => {
       }`}>
         <span className="w-1.5 h-1.5 rounded-full bg-accent-purple animate-pulse" />
         <span className="font-mono text-[10px] font-bold text-accent-purple dark:text-accent-cyan">
-          {activeSection.num} / 09
+          {activeSection.num} / 10
         </span>
         <span className="font-mono text-[10px] font-semibold text-gray-500 uppercase">
           • {activeSection.label}
         </span>
       </div>
+
 
       {/* Thin mini progress track */}
       <div className="w-24 h-[2px] bg-gray-200 dark:bg-white/10 rounded-full overflow-hidden">

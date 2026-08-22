@@ -35,16 +35,17 @@ const CustomCursor = ({ theme }) => {
       const clickable = target.closest('a, button, [role="button"], .cursor-pointer, input, textarea');
       const dragTarget = target.closest('.cursor-grab, canvas');
 
-      if (projectTarget) {
-        setCursorType('view');
-      } else if (clickable) {
+      if (clickable) {
         setCursorType('pointer');
+      } else if (projectTarget) {
+        setCursorType('view');
       } else if (dragTarget) {
         setCursorType('drag');
       } else {
         setCursorType('default');
       }
     };
+
 
     window.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseleave', handleMouseLeaveWindow);

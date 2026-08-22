@@ -12,6 +12,7 @@ import Skills from '../components/Skills';
 import Experience from '../components/Experience';
 import About from '../components/About';
 import Certificates from '../components/Certificates';
+import ResearchPublications from '../components/ResearchPublications';
 import Education from '../components/Education';
 import Achievements from '../components/Achievements';
 import Contact from '../components/Contact';
@@ -75,6 +76,9 @@ const Portfolio = ({ theme, setThemeMode, themeMode, systemIsDark }) => {
         {/* 10. Verified Industry Certifications with Google Drive CTA */}
         <Certificates theme={theme} />
 
+        {/* 10.5. Published Research (Springer 2026) */}
+        <ResearchPublications theme={theme} />
+
         {/* 11. Academic Foundation */}
         <Education theme={theme} />
 
@@ -84,6 +88,7 @@ const Portfolio = ({ theme, setThemeMode, themeMode, systemIsDark }) => {
         {/* 13. Dramatic Contact Section */}
         <Contact theme={theme} />
       </main>
+
 
       {/* 14. Minimal Footer */}
       <Footer theme={theme} />

@@ -1,9 +1,75 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import Portfolio from './pages/Portfolio';
 import ResumePage from './pages/ResumePage';
 import ProjectDetailsPage from './pages/ProjectDetailsPage';
+import { pageVariants } from './utils/motion';
 import './App.css';
+
+function AnimatedRoutes({ effectiveTheme, setThemeMode, themeMode, systemIsDark }) {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={location.pathname}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        variants={pageVariants}
+        className="w-full min-h-screen"
+      >
+        <Routes location={location} key={location.pathname}>
+          <Route
+            path="/"
+            element={
+              <Portfolio
+                theme={effectiveTheme}
+                setThemeMode={setThemeMode}
+                themeMode={themeMode}
+                systemIsDark={systemIsDark}
+              />
+            }
+          />
+          <Route
+            path="/resume"
+            element={
+              <ResumePage
+                theme={effectiveTheme}
+                setThemeMode={setThemeMode}
+                themeMode={themeMode}
+                systemIsDark={systemIsDark}
+              />
+            }
+          />
+          <Route
+            path="/projects/:id"
+            element={
+              <ProjectDetailsPage
+                theme={effectiveTheme}
+                setThemeMode={setThemeMode}
+                themeMode={themeMode}
+                systemIsDark={systemIsDark}
+              />
+            }
+          />
+          <Route
+            path="*"
+            element={
+              <Portfolio
+                theme={effectiveTheme}
+                setThemeMode={setThemeMode}
+                themeMode={themeMode}
+                systemIsDark={systemIsDark}
+              />
+            }
+          />
+        </Routes>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
 
 function App() {
   const [themeMode, setThemeModeState] = useState('system'); // 'dark', 'light', 'system'
@@ -74,52 +140,12 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Portfolio
-                theme={effectiveTheme}
-                setThemeMode={setThemeMode}
-                themeMode={themeMode}
-                systemIsDark={systemIsDark}
-              />
-            }
-          />
-          <Route
-            path="/resume"
-            element={
-              <ResumePage
-                theme={effectiveTheme}
-                setThemeMode={setThemeMode}
-                themeMode={themeMode}
-                systemIsDark={systemIsDark}
-              />
-            }
-          />
-          <Route
-            path="/projects/:id"
-            element={
-              <ProjectDetailsPage
-                theme={effectiveTheme}
-                setThemeMode={setThemeMode}
-                themeMode={themeMode}
-                systemIsDark={systemIsDark}
-              />
-            }
-          />
-          <Route
-            path="*"
-            element={
-              <Portfolio
-                theme={effectiveTheme}
-                setThemeMode={setThemeMode}
-                themeMode={themeMode}
-                systemIsDark={systemIsDark}
-              />
-            }
-          />
-        </Routes>
+        <AnimatedRoutes
+          effectiveTheme={effectiveTheme}
+          setThemeMode={setThemeMode}
+          themeMode={themeMode}
+          systemIsDark={systemIsDark}
+        />
       </BrowserRouter>
     </div>
   );

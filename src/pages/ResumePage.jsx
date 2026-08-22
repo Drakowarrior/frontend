@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
 import { 
   ArrowLeft, Download, ExternalLink, Printer, CheckCircle2, 
   Mail, Phone, MapPin, Award, Briefcase, GraduationCap, 
-  Code, Cpu, Sparkles 
+  Code, Cpu, Sparkles, BookOpen 
 } from 'lucide-react';
 import { FaLinkedin, FaGithub } from 'react-icons/fa';
 import { 
   PERSONAL_INFO, EXPERIENCES, EDUCATION_HISTORY, 
-  CERTIFICATIONS, FEATURED_PROJECTS, SKILL_CATEGORIES, ACHIEVEMENTS 
+  CERTIFICATIONS, FEATURED_PROJECTS, SKILL_CATEGORIES, ACHIEVEMENTS,
+  RESEARCH_PUBLICATIONS 
 } from '../data/portfolioData';
 import { SITE_CONFIG, downloadResume } from '../config/siteConfig';
+
 
 const ResumePage = ({ theme, toggleTheme }) => {
   const [downloading, setDownloading] = useState(false);
@@ -318,6 +319,57 @@ const ResumePage = ({ theme, toggleTheme }) => {
           </div>
         </div>
 
+        {/* Publications & Research Section */}
+        <div className="mb-10">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+            <div className="flex items-center gap-2">
+              <BookOpen size={18} className="text-accent-purple dark:text-accent-cyan" />
+              <h2 className="font-display font-black text-xl text-gray-900 dark:text-white uppercase tracking-wider">
+                PUBLICATIONS & RESEARCH
+              </h2>
+            </div>
+            <a
+              href={RESEARCH_PUBLICATIONS[0].doiUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-mono font-bold text-accent-purple dark:text-accent-cyan hover:underline flex items-center gap-1"
+            >
+              <span>READ PAPER ON SPRINGER</span>
+              <ExternalLink size={12} />
+            </a>
+          </div>
+          <div className="p-5 rounded-2xl border border-gray-200 dark:border-white/5 bg-gray-50/50 dark:bg-white/[0.02]">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <span className="font-mono text-[10px] font-bold px-2.5 py-0.5 rounded bg-accent-purple/15 text-accent-purple dark:text-accent-cyan border border-accent-purple/25">
+                {RESEARCH_PUBLICATIONS[0].badge}
+              </span>
+              <span className="text-xs font-mono text-gray-500">
+                {RESEARCH_PUBLICATIONS[0].journal} • {RESEARCH_PUBLICATIONS[0].volumeInfo}
+              </span>
+            </div>
+            <h3 className="font-bold text-base text-gray-900 dark:text-white mt-1">
+              {RESEARCH_PUBLICATIONS[0].title}
+            </h3>
+            <p className="text-xs font-mono text-accent-purple dark:text-accent-cyan mt-1 font-semibold">
+              "{RESEARCH_PUBLICATIONS[0].hook}"
+            </p>
+            <p className="mt-2 text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-normal">
+              {RESEARCH_PUBLICATIONS[0].abstract}
+            </p>
+
+            <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-gray-200 dark:border-white/5 text-center">
+              {RESEARCH_PUBLICATIONS[0].metrics.map((m, mIdx) => (
+                <div key={mIdx} className="p-2 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/5">
+                  <span className="font-display font-black text-sm sm:text-base text-gradient dark:text-gradient block">
+                    {m.value}{m.suffix}
+                  </span>
+                  <span className="text-[10px] font-mono text-gray-500 font-bold block uppercase">{m.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* Additional Activities */}
         <div>
           <div className="flex items-center gap-2 mb-4">
@@ -338,6 +390,7 @@ const ResumePage = ({ theme, toggleTheme }) => {
             ))}
           </div>
         </div>
+
 
       </div>
     </div>

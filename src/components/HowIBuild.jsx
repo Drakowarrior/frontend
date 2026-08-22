@@ -60,8 +60,10 @@ const HowIBuild = ({ theme }) => {
   ];
 
   return (
-    <section id="pipeline" className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <section id="pipeline" className="section-anchor py-8 sm:py-12 px-4 sm:px-6 lg:px-8 relative z-10 overflow-hidden">
       <div className="max-w-6xl mx-auto relative z-10">
+
+
         
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">

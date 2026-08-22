@@ -15,6 +15,13 @@
     --accent-color: #8b5cf6;
     --accent-secondary: #6366f1;
     --accent-cyan: #06b6d4;
+
+    /* Stacking Context Z-Index Scale */
+    --z-background: 1;
+    --z-content: 10;
+    --z-nav: 40;
+    --z-modal: 50;
+    --z-cursor: 60;
   }
 
   html.light {
@@ -27,12 +34,23 @@
     --accent-color: #5B3FD8;
     --accent-secondary: #4F46E5;
     --accent-cyan: #0284C7;
+
+    --z-background: 1;
+    --z-content: 10;
+    --z-nav: 40;
+    --z-modal: 50;
+    --z-cursor: 60;
   }
 
   html {
     scroll-behavior: smooth;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
+
+  .section-anchor {
+    scroll-margin-top: 7rem; /* 112px clearance for floating navbar */
+  }
+
   
   body {
     @apply transition-colors duration-300 overflow-x-hidden;

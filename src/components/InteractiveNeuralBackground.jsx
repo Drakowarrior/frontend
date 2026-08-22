@@ -207,10 +207,11 @@ const InteractiveNeuralBackground = ({ theme = 'dark' }) => {
   }, [isDark]);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+    <div className="fixed inset-0 pointer-events-none z-[1] overflow-hidden select-none">
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
     </div>
   );
+
 };
 
 export default InteractiveNeuralBackground;

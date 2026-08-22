@@ -6,8 +6,10 @@ const CurrentFocus = ({ theme }) => {
   const isDark = theme === 'dark';
 
   return (
-    <section className="py-6 sm:py-8 px-4 sm:px-6 relative overflow-hidden">
+    <section className="section-anchor py-4 sm:py-6 px-4 sm:px-6 relative z-10 overflow-hidden">
       <div className="max-w-6xl mx-auto">
+
+
         <div
           className={`p-5 sm:p-7 rounded-3xl border transition-all duration-300 relative overflow-hidden ${
             isDark

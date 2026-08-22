@@ -17,10 +17,14 @@ export const SITE_CONFIG = {
   // Certifications Common Google Drive Link
   certificationsDriveUrl: "https://drive.google.com/drive/folders/1_lhwqoDvvglL_YSutfVE_99rlUegMnTG",
   
+  // Publications & Research
+  publicationDoiUrl: "https://doi.org/10.1007/s10791-026-10431-3",
+
   // Projects
   sarvaLiveUrl: "https://sarva-ai-one.vercel.app/",
   sarvaGithubUrl: "https://github.com/Drakowarrior/sarva-ai"
 };
+
 
 // Helper for programmatic resume download with feedback
 export const downloadResume = (onStart, onComplete) => {

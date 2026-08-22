@@ -23,8 +23,9 @@ const Contact = ({ theme }) => {
   };
 
   return (
-    <section id="contact" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <section id="contact" className="section-anchor py-10 sm:py-16 px-4 sm:px-6 lg:px-8 relative z-10 overflow-hidden">
       {/* Background Glow */}
+
       <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full blur-[140px] pointer-events-none ${
         isDark ? 'bg-accent-purple/15' : 'bg-purple-200/35'
       }`} />

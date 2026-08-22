@@ -108,12 +108,40 @@ export const FEATURED_PROJECTS = [
       { step: "LLM Reasoning", title: "LLM", desc: "Grounded inference over factual clinical evidence", tech: "Foundation Model" },
       { step: "Response", title: "RESPONSE", desc: "Accurate, fact-checked medical answer delivered to practitioner", tech: "Structured Output" }
     ],
-    github: SITE_CONFIG.githubUrl,
+    github: null,
+    githubStatus: "Repository Coming Soon",
     liveDemo: null,
     status: "Coming Soon / Under Deployment",
     badge: "RAG Architecture"
   }
 ];
+
+export const RESEARCH_PUBLICATIONS = [
+  {
+    id: "green-cybersecurity-springer-2026",
+    badge: "PEER-REVIEWED // SPRINGER 2026",
+    journal: "Discover Computing, Springer",
+    volumeInfo: "Volume 29, Article 556 (2026)",
+    doi: "10.1007/s10791-026-10431-3",
+    doiUrl: "https://doi.org/10.1007/s10791-026-10431-3",
+    title: "Green Cybersecurity Framework for Sustainable and Energy Efficient Digital Defense in Industry 5 and Beyond",
+    hook: "Can cybersecurity get stronger and more sustainable? We built a framework that says yes.",
+    abstract: "A Green Cybersecurity framework unifying digital defense, energy efficiency, resource optimization, and environmental sustainability for Industry 5.0 and beyond. Simulated and validated using DeterLab with the NSL-KDD and Simatic Scan datasets.",
+    metrics: [
+      { label: "Energy Reduction", value: 37.6, suffix: "%", desc: "Lower power consumption in simulated threat defense" },
+      { label: "Resource Efficiency", value: 45.0, suffix: "%", desc: "Improvement in hardware resource allocation" },
+      { label: "Detection Accuracy", value: 95.3, suffix: "%", desc: "Validated on NSL-KDD & Simatic Scan datasets" }
+    ],
+    authors: [
+      { name: "Karan Garg", role: "Primary Author", url: null, isUser: true },
+      { name: "Uday Veer Singh", role: "Co-Author", url: "https://www.linkedin.com/in/uday-veer-singh-409694367/", isUser: false },
+      { name: "Lakshya Chaudhary", role: "Co-Author", url: "https://www.linkedin.com/in/lakshya-chaudhary-079805215/", isUser: false },
+      { name: "Dr. Shinnu Jangra", role: "Mentor & Corresponding Author", url: "https://www.linkedin.com/in/dr-shinnu-jangra-998084114/", isUser: false }
+    ],
+    affiliation: "Interdisciplinary research spanning the Department of Biotechnology and Chemical Engineering and the Department of Artificial Intelligence & Machine Learning, Manipal University Jaipur."
+  }
+];
+
 
 export const HOW_I_BUILD_PIPELINE = [
   {
@@ -276,10 +304,11 @@ export const EXPERIENCES = [
 export const TIMELINE_JOURNEY = [
   { year: "2023", milestone: "Started B.Tech", detail: "Computer Science & Bioscience at Manipal University Jaipur." },
   { year: "2024", milestone: "DevForge Leadership", detail: "Appointed Social Media Joint Head, advancing student tech initiatives." },
-  { year: "2026", milestone: "AI & Full-Stack Internships", detail: "Engineered enterprise AI chatbot at IGT Solutions & full-stack systems at Cognifyz." },
-  { year: "2026", milestone: "Building AI Products", detail: "Architected SARVA AI assistant & MedRAG retrieval engine." },
+  { year: "2026", milestone: "Published Springer Research", detail: "Co-authored peer-reviewed Green Cybersecurity paper in Springer Discover Computing." },
+  { year: "2026", milestone: "AI Systems Engineering", detail: "Engineered SARVA AI assistant, MedRAG engine, and IGT enterprise chatbot." },
   { year: "2027", milestone: "Graduation (Expected)", detail: "Completing B.Tech with focus on intelligent software & AI systems." }
 ];
+
 
 export const CERTIFICATIONS = [
   {

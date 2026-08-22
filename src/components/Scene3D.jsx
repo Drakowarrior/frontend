@@ -286,9 +286,9 @@ const Scene3D = ({ theme }) => {
   }, [isDark, reducedMotion]);
 
   return (
-    <div className="fixed inset-0 w-full h-full -z-10 pointer-events-none overflow-hidden transition-colors duration-500">
+    <div className="fixed inset-0 w-full h-full z-[1] pointer-events-none overflow-hidden transition-colors duration-500">
       {/* Background layer 1: Subtle tech grid */}
-      <div className={`absolute inset-0 ${isDark ? 'bg-grid-pattern opacity-60' : 'bg-grid-pattern-light opacity-80'}`} />
+      <div className={`absolute inset-0 pointer-events-none ${isDark ? 'bg-grid-pattern opacity-60' : 'bg-grid-pattern-light opacity-80'}`} />
 
       {/* Background layer 2: Static atmospheric lighting */}
       <div className={`absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full blur-[140px] pointer-events-none transition-colors duration-500 ${
@@ -299,9 +299,10 @@ const Scene3D = ({ theme }) => {
       }`} />
 
       {/* Background layer 3: Canvas for 4D AI Neural Core */}
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
     </div>
   );
+
 };
 
 export default Scene3D;
