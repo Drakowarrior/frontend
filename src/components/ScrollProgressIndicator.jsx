@@ -1,31 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useSpring } from 'framer-motion';
 
 const sectionsList = [
   { id: 'home', label: 'HERO', num: '01' },
   { id: 'projects', label: 'PROJECTS', num: '02' },
-  { id: 'pipeline', label: 'PIPELINE', num: '03' },
-  { id: 'stack', label: 'STACK', num: '04' },
+  { id: 'pipeline', label: 'METHODOLOGY', num: '03' },
+  { id: 'stack', label: 'CONSTELLATION', num: '04' },
   { id: 'skills', label: 'SKILLS', num: '05' },
   { id: 'experience', label: 'EXPERIENCE', num: '06' },
   { id: 'about', label: 'ABOUT', num: '07' },
-  { id: 'certifications', label: 'CERTIFICATIONS', num: '08' },
+  { id: 'certifications', label: 'CERTIFICATES', num: '08' },
   { id: 'publications', label: 'RESEARCH', num: '09' },
-  { id: 'contact', label: 'CONTACT', num: '10' },
+  { id: 'education', label: 'EDUCATION', num: '10' },
+  { id: 'contact', label: 'CONTACT', num: '11' },
 ];
 
-const ScrollProgressIndicator = ({ theme }) => {
+const ScrollProgressIndicator = () => {
   const [activeSection, setActiveSection] = useState(sectionsList[0]);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const isDark = theme === 'dark';
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 280,
+    damping: 30,
+    restDelta: 0.001
+  });
 
   useEffect(() => {
     const handleScroll = () => {
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
-      setScrollProgress(progress);
-
-      const scrollPos = window.scrollY + 160;
+      const scrollPos = window.scrollY + 200;
 
       for (let i = sectionsList.length - 1; i >= 0; i--) {
         const el = document.getElementById(sectionsList[i].id);
@@ -41,30 +42,26 @@ const ScrollProgressIndicator = ({ theme }) => {
   }, []);
 
   return (
-    <div className="fixed right-6 bottom-8 z-40 hidden xl:flex flex-col items-end gap-2 pointer-events-none select-none">
-      <div className={`px-3 py-1.5 rounded-full border backdrop-blur-md transition-all flex items-center gap-2 ${
-        isDark
-          ? 'border-white/10 bg-[#0e0e15]/80 text-white shadow-xl'
-          : 'border-[#E4E4EA] bg-white/90 text-[#111113] shadow-md'
-      }`}>
-        <span className="w-1.5 h-1.5 rounded-full bg-accent-purple animate-pulse" />
-        <span className="font-mono text-[10px] font-bold text-accent-purple dark:text-accent-cyan">
-          {activeSection.num} / 10
-        </span>
-        <span className="font-mono text-[10px] font-semibold text-gray-500 uppercase">
-          • {activeSection.label}
-        </span>
-      </div>
+    <>
+      {/* 1. Thin top gradient scroll bar */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-lab-accentViolet via-lab-accentIndigo to-lab-accentCyan origin-left pointer-events-none"
+        style={{ scaleX, zIndex: 100 }}
+      />
 
-
-      {/* Thin mini progress track */}
-      <div className="w-24 h-[2px] bg-gray-200 dark:bg-white/10 rounded-full overflow-hidden">
-        <motion.div
-          className="h-full bg-gradient-to-r from-accent-purple to-accent-cyan"
-          style={{ width: `${scrollProgress}%` }}
-        />
+      {/* 2. Floating glass section pill (bottom right on desktop) */}
+      <div className="fixed right-6 bottom-8 z-40 hidden xl:flex flex-col items-end gap-2 pointer-events-none select-none">
+        <div className="px-3.5 py-1.5 rounded-full border border-indigo-200/60 bg-white/80 backdrop-blur-md shadow-elevation-1 flex items-center gap-2.5">
+          <span className="w-2 h-2 rounded-full bg-lab-accentViolet animate-pulse" />
+          <span className="font-mono text-[11px] font-bold text-lab-accentIndigo">
+            {activeSection.num} / 11
+          </span>
+          <span className="font-mono text-[11px] font-semibold text-lab-muted uppercase">
+            • {activeSection.label}
+          </span>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

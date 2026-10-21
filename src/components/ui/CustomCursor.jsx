@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 
-const CustomCursor = ({ theme }) => {
+const CustomCursor = () => {
   const [cursorType, setCursorType] = useState('default'); // 'default', 'pointer', 'view', 'drag'
   const [isVisible, setIsVisible] = useState(false);
 
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
 
-  const springConfig = { damping: 28, stiffness: 260, mass: 0.4 };
+  const springConfig = { damping: 26, stiffness: 280, mass: 0.35 };
   const trailX = useSpring(mouseX, springConfig);
   const trailY = useSpring(mouseY, springConfig);
 
   useEffect(() => {
-    const isTouch = window.matchMedia('(pointer: coarse)').matches;
+    // Disable on touch devices and if user prefers reduced motion
+    const isTouch = window.matchMedia('(pointer: coarse)').matches ||
+                    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (isTouch) return;
 
     document.body.classList.add('custom-cursor-active');
@@ -32,13 +34,13 @@ const CustomCursor = ({ theme }) => {
       if (!target) return;
 
       const projectTarget = target.closest('[data-cursor="view"], .project-card-interactive');
-      const clickable = target.closest('a, button, [role="button"], .cursor-pointer, input, textarea');
+      const clickable = target.closest('a, button, [role="button"], .cursor-pointer, input, textarea, select');
       const dragTarget = target.closest('.cursor-grab, canvas');
 
-      if (clickable) {
-        setCursorType('pointer');
-      } else if (projectTarget) {
+      if (projectTarget) {
         setCursorType('view');
+      } else if (clickable) {
+        setCursorType('pointer');
       } else if (dragTarget) {
         setCursorType('drag');
       } else {
@@ -46,8 +48,7 @@ const CustomCursor = ({ theme }) => {
       }
     };
 
-
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     document.addEventListener('mouseleave', handleMouseLeaveWindow);
     document.addEventListener('mouseenter', handleMouseEnterWindow);
     window.addEventListener('mouseover', handleMouseOver);
@@ -63,32 +64,34 @@ const CustomCursor = ({ theme }) => {
 
   if (!isVisible) return null;
 
-  const isDark = theme === 'dark';
-
   const ringVariants = {
     default: {
-      width: 28,
-      height: 28,
-      backgroundColor: 'transparent',
-      borderColor: isDark ? 'rgba(139, 92, 246, 0.45)' : 'rgba(99, 102, 241, 0.45)',
+      width: 32,
+      height: 32,
+      backgroundColor: 'rgba(99, 102, 241, 0.04)',
+      borderColor: 'rgba(99, 102, 241, 0.40)',
+      scale: 1,
     },
     pointer: {
-      width: 48,
-      height: 48,
-      backgroundColor: isDark ? 'rgba(124, 58, 237, 0.12)' : 'rgba(99, 102, 241, 0.1)',
-      borderColor: isDark ? '#a78bfa' : '#6366f1',
+      width: 52,
+      height: 52,
+      backgroundColor: 'rgba(99, 102, 241, 0.12)',
+      borderColor: '#6366F1',
+      scale: 1.15,
     },
     view: {
-      width: 74,
-      height: 74,
-      backgroundColor: isDark ? 'rgba(6, 182, 212, 0.2)' : 'rgba(14, 165, 233, 0.15)',
-      borderColor: isDark ? '#22d3ee' : '#0ea5e9',
+      width: 80,
+      height: 80,
+      backgroundColor: 'rgba(6, 182, 212, 0.16)',
+      borderColor: '#06B6D4',
+      scale: 1.1,
     },
     drag: {
-      width: 58,
-      height: 58,
-      backgroundColor: isDark ? 'rgba(139, 92, 246, 0.15)' : 'rgba(99, 102, 241, 0.1)',
-      borderColor: isDark ? '#8b5cf6' : '#6366f1',
+      width: 60,
+      height: 60,
+      backgroundColor: 'rgba(139, 92, 246, 0.15)',
+      borderColor: '#8B5CF6',
+      scale: 1.05,
     }
   };
 
@@ -109,16 +112,17 @@ const CustomCursor = ({ theme }) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          boxShadow: '0 0 16px -2px rgba(99, 102, 241, 0.25)',
         }}
         variants={ringVariants}
         animate={cursorType}
-        transition={{ type: 'spring', stiffness: 260, damping: 28, mass: 0.2 }}
+        transition={{ type: 'spring', stiffness: 280, damping: 26, mass: 0.2 }}
       >
         {cursorType === 'view' && (
           <motion.span
             initial={{ opacity: 0, scale: 0.6 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-[10px] font-mono font-bold tracking-widest text-accent-cyan uppercase"
+            className="text-[10px] font-mono font-bold tracking-widest text-lab-accentCyan uppercase"
           >
             VIEW
           </motion.span>
@@ -133,15 +137,16 @@ const CustomCursor = ({ theme }) => {
           top: mouseY,
           x: '-50%',
           y: '-50%',
-          width: 5,
-          height: 5,
+          width: 6,
+          height: 6,
           borderRadius: '50%',
           pointerEvents: 'none',
           zIndex: 100000,
+          backgroundColor: '#6366F1',
+          boxShadow: '0 0 8px rgba(99, 102, 241, 0.8)',
         }}
         animate={{
           scale: cursorType === 'default' ? 1 : 0.4,
-          backgroundColor: isDark ? '#38bdf8' : '#6366f1',
         }}
         transition={{ duration: 0.1 }}
       />

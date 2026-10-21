@@ -1,0 +1,57 @@
+:root {
+  /* Core Color Palette - "BRIGHT 3D LAB" */
+  --bg-base: #F6F5FF;
+  --bg-lavender: #EDE9FE;
+  --bg-ice-cyan: #E0F7FB;
+  
+  --surface-glass: rgba(255, 255, 255, 0.72);
+  --surface-glass-subtle: rgba(255, 255, 255, 0.50);
+  --surface-solid: #FFFFFF;
+  
+  --border-glass: rgba(99, 102, 241, 0.14);
+  --border-glass-hover: rgba(99, 102, 241, 0.35);
+  --border-glass-active: rgba(139, 92, 246, 0.50);
+  
+  --ink-primary: #12142A;
+  --ink-muted: #4B5380;
+  --ink-subtle: #6E76A4;
+  
+  --brand-violet: #8B5CF6;
+  --brand-indigo: #6366F1;
+  --brand-cyan: #06B6D4;
+  --brand-gradient: linear-gradient(135deg, #8B5CF6 0%, #6366F1 50%, #06B6D4 100%);
+  --brand-gradient-hover: linear-gradient(135deg, #7C3AED 0%, #4F46E5 50%, #0891B2 100%);
+  --brand-gradient-text: linear-gradient(135deg, #4338CA 0%, #6366F1 45%, #0284C7 100%);
+  
+  --accent-coral: #FF7A90;
+  --accent-lime: #B8F34A;
+  
+  /* Radii hierarchy */
+  --radius-card: 28px;
+  --radius-btn: 14px;
+  --radius-chip: 9999px;
+  
+  /* Violet-tinted Elevation Shadows */
+  --shadow-elevation-1: 0 8px 24px -6px rgba(99, 102, 241, 0.15);
+  --shadow-elevation-2: 0 16px 40px -12px rgba(99, 102, 241, 0.22);
+  --shadow-elevation-3: 0 24px 60px -20px rgba(99, 102, 241, 0.32);
+  --shadow-glass: 0 24px 60px -24px rgba(99, 102, 241, 0.35), 0 4px 16px -2px rgba(99, 102, 241, 0.08);
+  --shadow-glow: 0 12px 32px -4px rgba(99, 102, 241, 0.45);
+  
+  /* Fluid Typography Scale */
+  --font-hero: clamp(3.2rem, 9.5vw, 8.8rem);
+  --font-h1: clamp(2.4rem, 5.5vw, 4.2rem);
+  --font-h2: clamp(1.8rem, 3.8vw, 3rem);
+  --font-h3: clamp(1.3rem, 2.4vw, 1.85rem);
+  --font-body: 1.0625rem;
+  --font-small: 0.875rem;
+  
+  /* Stacking Context */
+  --z-canvas: -1;
+  --z-noise: 0;
+  --z-base: 1;
+  --z-content: 10;
+  --z-nav: 40;
+  --z-modal: 50;
+  --z-cursor: 9999;
+}

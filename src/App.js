@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import Portfolio from './pages/Portfolio';
@@ -7,7 +7,7 @@ import ProjectDetailsPage from './pages/ProjectDetailsPage';
 import { pageVariants } from './utils/motion';
 import './App.css';
 
-function AnimatedRoutes({ effectiveTheme, setThemeMode, themeMode, systemIsDark }) {
+function AnimatedRoutes() {
   const location = useLocation();
 
   return (
@@ -21,50 +21,10 @@ function AnimatedRoutes({ effectiveTheme, setThemeMode, themeMode, systemIsDark 
         className="w-full min-h-screen"
       >
         <Routes location={location} key={location.pathname}>
-          <Route
-            path="/"
-            element={
-              <Portfolio
-                theme={effectiveTheme}
-                setThemeMode={setThemeMode}
-                themeMode={themeMode}
-                systemIsDark={systemIsDark}
-              />
-            }
-          />
-          <Route
-            path="/resume"
-            element={
-              <ResumePage
-                theme={effectiveTheme}
-                setThemeMode={setThemeMode}
-                themeMode={themeMode}
-                systemIsDark={systemIsDark}
-              />
-            }
-          />
-          <Route
-            path="/projects/:id"
-            element={
-              <ProjectDetailsPage
-                theme={effectiveTheme}
-                setThemeMode={setThemeMode}
-                themeMode={themeMode}
-                systemIsDark={systemIsDark}
-              />
-            }
-          />
-          <Route
-            path="*"
-            element={
-              <Portfolio
-                theme={effectiveTheme}
-                setThemeMode={setThemeMode}
-                themeMode={themeMode}
-                systemIsDark={systemIsDark}
-              />
-            }
-          />
+          <Route path="/" element={<Portfolio />} />
+          <Route path="/resume" element={<ResumePage />} />
+          <Route path="/projects/:id" element={<ProjectDetailsPage />} />
+          <Route path="*" element={<Portfolio />} />
         </Routes>
       </motion.div>
     </AnimatePresence>
@@ -72,80 +32,22 @@ function AnimatedRoutes({ effectiveTheme, setThemeMode, themeMode, systemIsDark 
 }
 
 function App() {
-  const [themeMode, setThemeModeState] = useState('system'); // 'dark', 'light', 'system'
-  const [effectiveTheme, setEffectiveTheme] = useState('dark');
-  const [systemIsDark, setSystemIsDark] = useState(true);
-
-  // Helper to determine and apply theme
-  const applyTheme = useCallback((mode) => {
-    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setSystemIsDark(prefersDark);
-
-    let resolved = mode;
-    if (mode === 'system') {
-      resolved = prefersDark ? 'dark' : 'light';
-    }
-
-    setEffectiveTheme(resolved);
-
-    // Apply to html and body elements
+  useEffect(() => {
+    // Enforce Bright 3D Lab Complete Light Theme
     const root = document.documentElement;
     const body = document.body;
 
-    root.classList.remove('dark', 'light');
-    root.classList.add(resolved);
-    body.classList.remove('dark', 'light');
-    body.classList.add(resolved);
-    root.style.colorScheme = resolved;
+    root.classList.remove('dark');
+    root.classList.add('light');
+    body.classList.remove('dark');
+    body.classList.add('light');
+    root.style.colorScheme = 'light';
   }, []);
 
-  useEffect(() => {
-    // 1. Load initial saved mode or default to 'system'
-    const savedMode = localStorage.getItem('kg_theme_mode') || 'system';
-    setThemeModeState(savedMode);
-    applyTheme(savedMode);
-
-    // 2. Real-time mediaQuery listener for OS theme changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleSystemChange = (e) => {
-      const isDarkNow = e.matches;
-      setSystemIsDark(isDarkNow);
-      const currentMode = localStorage.getItem('kg_theme_mode') || 'system';
-      if (currentMode === 'system') {
-        applyTheme('system');
-      }
-    };
-
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener('change', handleSystemChange);
-    } else if (mediaQuery.addListener) {
-      mediaQuery.addListener(handleSystemChange);
-    }
-
-    return () => {
-      if (mediaQuery.removeEventListener) {
-        mediaQuery.removeEventListener('change', handleSystemChange);
-      } else if (mediaQuery.removeListener) {
-        mediaQuery.removeListener(handleSystemChange);
-      }
-    };
-  }, [applyTheme]);
-
-  const setThemeMode = (mode) => {
-    setThemeModeState(mode);
-    localStorage.setItem('kg_theme_mode', mode);
-    applyTheme(mode);
-  };
-
   return (
-    <div className="App">
+    <div className="App bg-lab-bg text-lab-ink min-h-screen">
       <BrowserRouter>
-        <AnimatedRoutes
-          effectiveTheme={effectiveTheme}
-          setThemeMode={setThemeMode}
-          themeMode={themeMode}
-          systemIsDark={systemIsDark}
-        />
+        <AnimatedRoutes />
       </BrowserRouter>
     </div>
   );
