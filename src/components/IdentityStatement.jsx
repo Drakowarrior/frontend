@@ -15,13 +15,12 @@ const IdentityStatement = () => {
   };
 
   const lineVariants = {
-    hidden: { opacity: 0, y: 24, rotateX: 6 },
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
-      rotateX: 0,
       transition: {
-        duration: 0.7,
+        duration: 0.6,
         ease: [0.16, 1, 0.3, 1],
       },
     },
@@ -44,33 +43,33 @@ const IdentityStatement = () => {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          className="space-y-3 sm:space-y-4"
+          viewport={{ once: true, margin: "-40px" }}
+          className="space-y-4 sm:space-y-6 md:space-y-8"
         >
           {IDENTITY_STATEMENT.lines.map((line, index) => (
             <motion.div
               key={index}
               variants={lineVariants}
-              className="overflow-hidden"
+              className="relative"
             >
-              <h2 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-[64px] tracking-tight leading-[1.14] select-none">
+              <h2 className="font-display text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[62px] tracking-tight leading-[1.28] sm:leading-[1.32] md:leading-[1.35] select-none break-words">
                 {index === 0 && (
-                  <span className="text-[#4B5380] font-bold">
+                  <span className="text-[#4B5380] font-bold inline-block pt-1 pb-2">
                     {line}
                   </span>
                 )}
                 {index === 1 && (
-                  <span className="font-black bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] bg-clip-text text-transparent inline-block pb-1">
+                  <span className="font-black bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] bg-clip-text text-transparent inline-block pt-1 pb-2 [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
                     {line}
                   </span>
                 )}
                 {index === 2 && (
-                  <span className="text-[#12142A] font-black">
+                  <span className="text-[#12142A] font-black inline-block pt-1 pb-2">
                     {line}
                   </span>
                 )}
                 {index === 3 && (
-                  <span className="font-black bg-gradient-to-r from-[#4F46E5] via-[#8B5CF6] to-[#0EA5E9] bg-clip-text text-transparent inline-block pb-1">
+                  <span className="font-black bg-gradient-to-r from-[#4F46E5] via-[#8B5CF6] to-[#0EA5E9] bg-clip-text text-transparent inline-block pt-1 pb-2 [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
                     {line}
                   </span>
                 )}
